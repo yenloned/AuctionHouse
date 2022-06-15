@@ -13,8 +13,7 @@
 * [Epilogue](https://github.com/yenloned/AuctionHouse#epilogue)
 
 ## Introduction
-Auction House is a real time mock bidding platform, which provides fast and real time bidding functions by GraphQL API.
-It does not invovle any real currencies, trading, bidding, or buy and sell since this project is aimed to demo the web development technologies and practice.
+Auction House is a real-time mock bidding website, which provides fast and real-time bidding functions by GraphQL API. It does not involve any real currencies, trading, bidding, or buying and selling since this project is aimed to demo the web development technologies and practice.
 
 ## Live Demo
 This project is still in development, website will be deployed afterward.
