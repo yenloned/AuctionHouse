@@ -2,7 +2,7 @@
 
 #backend
 /backend/node_modules
-/backend/.env
+/backend/.env.backend
 /backend/build
 /backend/dist
 /backend/npm-debug.log*
