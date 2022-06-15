@@ -1,23 +1,69 @@
-# Next.js + Tailwind CSS Example
+# Auction House
 
-This example shows how to use [Tailwind CSS](https://tailwindcss.com/) [(v3.0)](https://tailwindcss.com/blog/tailwindcss-v3) with Next.js. It follows the steps outlined in the official [Tailwind docs](https://tailwindcss.com/docs/guides/nextjs).
+## Table of Contents
+* [Introduction](https://github.com/yenloned/AuctionHouse#introduction)
+* [Live Demo](https://github.com/yenloned/AuctionHouse#live-demo)
+* [Technologies](https://github.com/yenloned/AuctionHouse#technologies)
+* [Getting Started](https://github.com/yenloned/AuctionHouse#getting-started)
+* [Architectures](https://github.com/yenloned/AuctionHouse#architectures)
+* [Design](https://github.com/yenloned/AuctionHouse#design)
+* [Functions](https://github.com/yenloned/AuctionHouse#functions)
+* [Features](https://github.com/yenloned/AuctionHouse#features)
+* [Preview](https://github.com/yenloned/AuctionHouse#preview)
+* [Epilogue](https://github.com/yenloned/AuctionHouse#epilogue)
 
-## Deploy your own
+## Introduction
+Auction House is a real time mock bidding platform, which provides fast and real time bidding functions by GraphQL API.
+It does not invovle any real currencies, trading, bidding, or buy and sell since this project is aimed to demo the web development technologies and practice.
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) or preview live with [StackBlitz](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-tailwindcss)
+## Live Demo
+This project is still in development, website will be deployed afterward.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-tailwindcss&project-name=with-tailwindcss&repository-name=with-tailwindcss)
+## Technologies
+**FrontEnd**
+* [NextJS](https://nextjs.org/)
+* [TailwindCSS](https://tailwindcss.com/)
 
-## How to use
+**Backend**
+* [GraphQL](https://graphql.org/)
+* [NestJS](https://nestjs.com/)
+* [MongoDB](https://www.mongodb.com/)
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+**Other Highlighted Libraries**
+-- (Continue Update)
 
-```bash
-npx create-next-app --example with-tailwindcss with-tailwindcss-app
-# or
-yarn create next-app --example with-tailwindcss with-tailwindcss-app
-# or
-pnpm create next-app --example with-tailwindcss with-tailwindcss-app
+## Getting Started
+```node
+npm install
+npm run start
+
+cd backend
+npm install
+npm run start
 ```
 
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+Open [http://localhost:3000](http://localhost:3000) and you will see the page appear.
+
+## Architectures
+-- (Continue Update)
+
+## Design
+* Fully Responsive
+* GraphQL API
+* Real Time System
+* MVC Model
+
+## Functions
+-- (Continue Update)
+
+## Features
+-- (Continue Update)
+
+## Preview
+-- (Continue Update)
+
+## Epilogue
+-- (Continue Update)
+
+
+
