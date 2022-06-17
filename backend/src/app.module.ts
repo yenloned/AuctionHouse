@@ -1,21 +1,23 @@
+import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
+import { GraphQLModule } from '@nestjs/graphql';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { ItemsModule } from './items/items.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({envFilePath: ".env.backend"}),
-    MongooseModule.forRoot(process.env.DATABASE_URL),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRoot({
       driver: ApolloDriver,
-      autoSchemaFile: "src/schema.gql"
+      autoSchemaFile: "schema.gql"
     }),
-    ItemsModule
+    ConfigModule.forRoot({
+      envFilePath: '.env.backend'
+    }),
+    MongooseModule.forRoot(process.env.DB_URL),
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService],
