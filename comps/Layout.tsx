@@ -1,3 +1,4 @@
+import CustomTheme from "./CustomTheme";
 import NavBar from "./Navbar"
 
 const Layout = (({children}: any) =>{
