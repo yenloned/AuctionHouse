@@ -5,5 +5,7 @@
 @layer base{
     html{
         @apply font-family_header1;
+        @apply font-family_body1;
+        @apply font-family_body2;
     }
 }

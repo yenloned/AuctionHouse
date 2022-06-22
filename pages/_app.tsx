@@ -12,6 +12,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
     <Head>
       <link href="https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap" rel="stylesheet" />
+      <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet" />
+      <link href="https://fonts.googleapis.com/css2?family=Barlow&display=swap" rel="stylesheet"/>
     </Head>
     <ThemeProvider enableSystem={true} attribute="class">
     <Layout>
