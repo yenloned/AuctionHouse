@@ -50,7 +50,7 @@ const NavBar = () => {
         </div>
         <div className="flex text-base justify-center font-family_header1">
           {renderThemeChanger()}
-          <Link href="/login">
+          <Link href="/account/login">
           <div className="mx-8 cursor-pointer">Login</div>
           </Link>
         </div>
