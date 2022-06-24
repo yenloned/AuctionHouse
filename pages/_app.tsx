@@ -11,9 +11,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
     <Head>
+      <title>Auction House | Bidding Platform</title>
       <link href="https://fonts.googleapis.com/css2?family=Kdam+Thmor+Pro&display=swap" rel="stylesheet" />
       <link href="https://fonts.googleapis.com/css2?family=Rubik&display=swap" rel="stylesheet" />
       <link href="https://fonts.googleapis.com/css2?family=Barlow&display=swap" rel="stylesheet"/>
+      <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500&display=swap" rel="stylesheet" />
+      <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet" />
     </Head>
     <ThemeProvider enableSystem={true} attribute="class">
     <Layout>
