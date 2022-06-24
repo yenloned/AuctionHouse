@@ -3,7 +3,7 @@ import Auction from "../../media/png/auction.png"
 
 export const Homeheader = () => {
     return (
-        <div className="dark:bg-gray-900 min-h-[680px] flex items-center justify-evenly">
+      <div className="dark:bg-gray-900 min-h-[680px] flex items-center justify-evenly">
         <div className="">
           <div className="text-black dark:text-white text-4xl font-family_header1">
             Auction House
