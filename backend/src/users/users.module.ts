@@ -9,11 +9,11 @@ import { UsersService } from './users.service';
 @Module({
   providers: [UsersResolver, UsersService],
   imports: [
-      MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
-      GraphQLModule.forRoot({
-          driver: ApolloDriver,
-          autoSchemaFile: "schema.gql"
-        })
-    ]
+    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    GraphQLModule.forRoot({
+        driver: ApolloDriver,
+        autoSchemaFile: "schema.gql"
+    })
+  ]
 })
 export class UsersModule {}

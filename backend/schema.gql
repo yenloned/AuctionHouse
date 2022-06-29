@@ -3,7 +3,7 @@
 # ------------------------------------------------------
 
 type CreateUserDto {
-  id: ID!
+  _id: ID!
   name: String!
   balance: Int!
 }
@@ -11,6 +11,11 @@ type CreateUserDto {
 type Query {
   hello: String!
   users: [CreateUserDto!]!
+  find_user(id: FindUserInput!): CreateUserDto!
+}
+
+input FindUserInput {
+  _id: String!
 }
 
 type Mutation {
