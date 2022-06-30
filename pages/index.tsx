@@ -1,31 +1,37 @@
-//import { ApolloClient, InMemoryCache, gql } from "@apollo/client"
-
 import { LoginYourAccount } from "../comps/homepage/LoginYourAccount"
 import { BrowseMarket } from "../comps/homepage/BrowseMarket"
 import { BidItems } from "../comps/homepage/BidItems"
 import { Homeheader } from "../comps/homepage/Homeheader"
 import { CreateYourItem } from "../comps/homepage/CreateYourItem"
 import { HaveFun } from "../comps/homepage/HaveFun"
+import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
 
 /*
-export async function getServerSideProps(){
+export async function letsgo(){
   const client = new ApolloClient({
     uri: "http://localhost:5000/graphql/",
     cache: new InMemoryCache(),
   })
-  const {data} = await client.query({
-    query: gql
-    `query{
-      users{
-        name
-        _id
-      }
-    }`
-  })
-  return {
-    props: {
-      data: data.users
-    }
+  try{
+    const {data} = await client.mutate({
+      mutation: gql
+      `mutation{
+        registerUser(input: {
+          firstname: "Rudy", 
+          lastname: "Yen", 
+          email: "s2eeaa@gmail.com", 
+          password: "asdasdasd",
+          confirm_password: "fuck",
+          })
+        {
+          firstname
+        }
+      }`
+    })
+    console.log(data)
+  }catch(e){
+    console.log(e)
+    console.log("GHJKL")
   }
 }
 

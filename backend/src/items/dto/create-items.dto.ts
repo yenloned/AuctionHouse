@@ -1,4 +1,4 @@
-import { Int, Field, ObjectType, ID } from "@nestjs/graphql";
+import { Int, Field, ObjectType, ID, GraphQLTimestamp } from "@nestjs/graphql";
 
 @ObjectType()
 export class CreateItemDto {
@@ -12,8 +12,10 @@ export class CreateItemDto {
   readonly start_price: number;
   @Field(() => Int)
   readonly per_price: number;
-  @Field(() => Int)
-  readonly end_price: number | null;
+  @Field({nullable: true})
+  readonly end_price?: number;
   @Field(() => Int)
   readonly duration: number;
+  @Field(() => GraphQLTimestamp)
+  readonly start_time: string;
 }

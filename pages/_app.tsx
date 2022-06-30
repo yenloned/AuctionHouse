@@ -19,9 +19,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet" />
     </Head>
     <ThemeProvider enableSystem={true} attribute="class">
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </ThemeProvider>
     </>
   )

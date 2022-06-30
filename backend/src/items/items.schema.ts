@@ -14,9 +14,11 @@ export class Item {
   @Prop()
   per_price: number;
   @Prop()
-  end_price: number | null;
+  end_price?: number;
   @Prop()
   duration: number;
+  @Prop()
+  start_time: string;
 }
 
 export const ItemsSchema = SchemaFactory.createForClass(Item);

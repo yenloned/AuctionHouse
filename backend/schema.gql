@@ -4,14 +4,36 @@
 
 type CreateUserDto {
   _id: ID!
-  name: String!
+  firstname: String!
+  lastname: String!
+  email: String!
+  password: String!
   balance: Int!
+  currentItem: [String!]
 }
+
+type CreateItemDto {
+  _id: ID!
+  name: String!
+  description: String!
+  start_price: Int!
+  per_price: Int!
+  end_price: Float
+  duration: Int!
+  start_time: Timestamp!
+}
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
 
 type Query {
   hello: String!
   users: [CreateUserDto!]!
   find_user(id: FindUserInput!): CreateUserDto!
+  helloitems: String!
+  items: [CreateItemDto!]!
 }
 
 input FindUserInput {
@@ -20,9 +42,24 @@ input FindUserInput {
 
 type Mutation {
   createUser(input: UserInput!): CreateUserDto!
+  createItem(input: ItemInput!): CreateItemDto!
 }
 
 input UserInput {
-  name: String!
+  firstname: String!
+  lastname: String!
+  email: String!
+  password: String!
   balance: Int!
+  currentItem: [String!]
+}
+
+input ItemInput {
+  name: String!
+  description: String!
+  start_price: Int!
+  per_price: Int!
+  end_price: Int
+  duration: Int!
+  start_time: Timestamp!
 }

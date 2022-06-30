@@ -1,4 +1,4 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
+import { Field, GraphQLTimestamp, InputType, Int } from "@nestjs/graphql";
 
 @InputType()
 export class ItemInput{
@@ -10,8 +10,10 @@ export class ItemInput{
     readonly start_price: number;
     @Field(() => Int)
     readonly per_price: number;
-    @Field(() => Int)
-    readonly end_price: number | null;
+    @Field(() => Int, {nullable: true})
+    readonly end_price: number;
     @Field(() => Int)
     readonly duration: number;
+    @Field(() => GraphQLTimestamp)
+    readonly start_time: string;
 }

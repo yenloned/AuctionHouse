@@ -4,7 +4,6 @@ import { Int, Field, ObjectType, ID } from "@nestjs/graphql";
 export class CreateUserDto {
   @Field(() => ID)
   _id: string
-  /*
   @Field()
   readonly firstname: string;
   @Field()
@@ -13,9 +12,8 @@ export class CreateUserDto {
   readonly email: string;
   @Field()
   readonly password: string;
-  */
-  @Field()
-  readonly name: string;
   @Field(() => Int)
   readonly balance: number;
+  @Field(() => [String], { nullable: true })
+  readonly currentItem?: string[];
 }

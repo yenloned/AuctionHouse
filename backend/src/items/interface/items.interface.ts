@@ -5,6 +5,7 @@ export interface Item extends Document {
     readonly description: string;
     readonly start_price: number;
     readonly per_price: number;
-    readonly end_price: number | null;
+    readonly end_price: number;
     readonly duration: number;
+    readonly start_time: string;
 }
