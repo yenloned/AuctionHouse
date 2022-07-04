@@ -43,6 +43,7 @@ input FindUserInput {
 type Mutation {
   createUser(input: UserInput!): CreateUserDto!
   createItem(input: ItemInput!): CreateItemDto!
+  registerUser(input: RegisterInput!): CreateUserDto!
 }
 
 input UserInput {
@@ -62,4 +63,12 @@ input ItemInput {
   end_price: Int
   duration: Int!
   start_time: Timestamp!
+}
+
+input RegisterInput {
+  firstname: String!
+  lastname: String!
+  email: String!
+  password: String!
+  confirm_password: String!
 }

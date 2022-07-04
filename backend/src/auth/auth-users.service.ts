@@ -1,16 +1,18 @@
-import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from '../users/users.schema';
-import { RegisterInput } from './inputs/register.input';
-import { UsersService } from 'src/users/users.service';
+import { Model } from 'mongoose';
+import { UserInput } from 'src/users/inputs/user.input';
+import { User, UserDocument } from 'src/users/users.schema';
 
 @Injectable()
 export class AuthUsersService {
-    constructor(
-        @InjectModel(User.name) private userModel: Model<UserDocument>, 
-        private usersService: UsersService
-    ){}
+    @InjectModel(User.name) 
+    private userModel: Model<UserDocument>
+
+    async create(createUserDto: UserInput): Promise<User> {
+        const createdUser = new this.userModel(createUserDto);
+        return createdUser.save();
+    }
 
     async checkRegisterInput(registerInput: any){
         //All Fail Cases
@@ -29,17 +31,27 @@ export class AuthUsersService {
         if (registerInput.password !== registerInput.confirm_password){
             return {errorMsg: "Password and Confirm Password does not match"}
         }
-        if (this.userModel.findOne({"email": registerInput.email})){
+        const checkEmailResult = await this.userModel.findOne({"email": registerInput.email})
+        if (checkEmailResult){
             return {errorMsg: "Email Address already registered"}
         }
+        return {errorMsg: null};
     }
 
-    async signup(registerInput: RegisterInput, signupInput){
-        const checkRegister = await this.checkRegisterInput(registerInput)
+    async signup(checkInput){
+        const checkRegister = await this.checkRegisterInput(checkInput)
         if (checkRegister.errorMsg){
-            console.log(checkRegister.errorMsg)
+            return ({errorMsg: checkRegister.errorMsg})
         }else{
-            return this.usersService.create(signupInput)
+            const signupInput = {
+                firstname: checkInput.firstname,
+                lastname: checkInput.lastname,
+                email: checkInput.email,
+                password: checkInput.password,
+                balance: 1000000,
+                currentItem: []
+            }
+            return this.create(signupInput)
         }
     }
 }
