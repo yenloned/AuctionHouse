@@ -24,9 +24,8 @@ const Login = () => {
         password: regPassword,
         confirm_password: regConfirmPassword
       }
-      console.log(signUpInput)
-      const signUpResult = await signupUser(signUpInput);
-      console.log(signUpResult)
+      const errorResult = await signupUser(signUpInput);
+      return setRegErrorMsg(errorResult);
     }
 
     return (
@@ -91,6 +90,7 @@ const Login = () => {
               </div>
               <input className="font-family_body2 text-lg min-w-[300px] w-1/5 h-9 px-3 border-b-2 ml-10
                 " type={regPwToggle?"text":"password"} placeholder="Confirm Password" value={regConfirmPassword} onChange={(e) => setRegConfirmPassword(e.target.value)}></input>
+              <div className="text-base text-rose-600 text-center">{regErrorMsg}</div>
               <button type="submit" onClick={() => signUp()} className="slate-100 min-w-[180px] rounded-md shadow-sm text-lg font-family_body2 my-2
               bg-gradient-to-t from-emerald-100 via-green-400 to-teal-300
               dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500">Register</button>

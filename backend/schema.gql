@@ -28,6 +28,10 @@ type CreateItemDto {
 """
 scalar Timestamp
 
+type LoginResponse {
+  access_token: String!
+}
+
 type Query {
   hello: String!
   users: [CreateUserDto!]!
@@ -44,6 +48,7 @@ type Mutation {
   createUser(input: UserInput!): CreateUserDto!
   createItem(input: ItemInput!): CreateItemDto!
   registerUser(input: RegisterInput!): CreateUserDto!
+  loginUser(input: LoginInput!): LoginResponse!
 }
 
 input UserInput {
@@ -71,4 +76,9 @@ input RegisterInput {
   email: String!
   password: String!
   confirm_password: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
 }
