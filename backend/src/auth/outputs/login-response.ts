@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { User } from "src/users/users.schema";
+import { CreateUserDto } from "src/users/dto/create-users.dto";
 
 @ObjectType()
 export class LoginResponse{
@@ -7,4 +7,6 @@ export class LoginResponse{
   access_token: string;
 
   //TODO: adding "user"
+  @Field(() => CreateUserDto)
+  user: {User: CreateUserDto};
 }

@@ -7,11 +7,16 @@ import { RegisterInput } from './inputs/register.input';
 import * as bcrypt from 'bcrypt';
 import { salt } from './hashing/salt';
 import { LoginInput } from './inputs/login.input';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthUsersService {
     @InjectModel(User.name) 
     private userModel: Model<UserDocument>
+
+    constructor(
+        private jwtService: JwtService
+    ){}
 
     //Register / SignUp
 
@@ -66,22 +71,29 @@ export class AuthUsersService {
     // Login
 
     async checkLoginInput(inputEmail: string, inputPassword: string){
+        //Check if user existed and password correct
         const allUserInfo = await this.userModel.findOne({"email": inputEmail})
-        const { password, ...userInfo } = allUserInfo
 
-        //console.log(password)
-        const passwordMatched = await bcrypt.compare(inputPassword, password);
-        //console.log(passwordMatched)
-        if (userInfo && passwordMatched){
-            return userInfo;
+        if(!allUserInfo){
+            throw new Error("Email Address does not existed. Make sure the input is correct.")
+        }else if(!allUserInfo.password){
+            throw new Error("Unkown Error encountered. Please try again later.")
         }
-        return null;
+
+        const passwordMatched = await bcrypt.compare(inputPassword, allUserInfo.password);
+        if (allUserInfo && passwordMatched){
+            return allUserInfo;
+        }
+        throw new Error("Login Failed. Please check if the Email Address and Password is correct.")
     }
 
     async login(checkInput: LoginInput){
         const userInfo = await this.checkLoginInput(checkInput.email, checkInput.password)
         return {
-            access_token: "jwt_token_hey",
+            access_token: this.jwtService.sign({
+                username: userInfo.email,
+                sub: userInfo._id
+            }),
             user: userInfo
         }
 

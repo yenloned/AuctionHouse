@@ -30,6 +30,7 @@ scalar Timestamp
 
 type LoginResponse {
   access_token: String!
+  user: CreateUserDto!
 }
 
 type Query {
@@ -38,6 +39,7 @@ type Query {
   find_user(id: FindUserInput!): CreateUserDto!
   helloitems: String!
   items: [CreateItemDto!]!
+  hello_auth: String!
 }
 
 input FindUserInput {
