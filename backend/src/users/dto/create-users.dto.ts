@@ -16,4 +16,8 @@ export class CreateUserDto {
   readonly balance: number;
   @Field(() => [String], { nullable: true })
   readonly currentItem?: string[];
+  @Field(() => [String], { nullable: true })
+  readonly biddingItem?: string[];
+  @Field(() => [String], { nullable: true })
+  readonly winningItem?: string[];
 }

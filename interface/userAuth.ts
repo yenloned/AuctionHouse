@@ -5,3 +5,8 @@ export type UserRegister = {
     password: string;
     confirm_password: string;
 }
+
+export type UserLogin = {
+    email: string;
+    password: string;
+}

@@ -1,12 +1,42 @@
 import { useState } from "react"
 import { InboxIcon, LockClosedIcon, LockOpenIcon, UserIcon } from "@heroicons/react/solid"
-import { signupUser } from "../../functions/auth/loginUser"
+import { signupUser } from "../api/auth/signupUser"
+import { loginUser } from "../api/auth/loginUser"
+import { useRouter } from "next/router"
 
 const Login = () => {
 
     const [loginToggle, setLoginToggle] = useState(false)
     const [loginPwToggle, setLoginPwToggle] = useState(false)
     const [regPwToggle, setRegPwToggle] = useState(false)
+
+    const router = useRouter();
+
+    const pageSwitch = () =>{
+      setLoginToggle(!loginToggle);
+      setLoginErrorMsg("")
+      setRegErrorMsg("")
+    }
+
+    //Login
+    const [loginEmail, setLoginEmail] = useState("");
+    const [loginPassword, setLoginPassword] =useState("");
+    const [loginErrorMsg, setLoginErrorMsg] = useState("");
+
+    const login = async () =>{
+      const loginInput = {
+        email: loginEmail,
+        password: loginPassword
+      }
+      const loginResult = await loginUser(loginInput);
+      if (loginResult.loginUser){
+        setLoginErrorMsg("")
+        localStorage.setItem('jwt_token', loginResult.loginUser.access_token)
+        router.push("/test")
+      }else{
+        setLoginErrorMsg(loginResult)
+      }
+    }
 
     //Registeration
     const [regFirstName, setRegFirstName] = useState("");
@@ -25,7 +55,10 @@ const Login = () => {
         confirm_password: regConfirmPassword
       }
       const errorResult = await signupUser(signUpInput);
-      return setRegErrorMsg(errorResult);
+      if(errorResult){
+        return setRegErrorMsg(errorResult);
+      }
+      pageSwitch();
     }
 
     return (
@@ -38,29 +71,30 @@ const Login = () => {
         dark:bg-gradient-to-t dark:from-neutral-900 dark:via-zinc-800 dark:to-stone-800">
             <div className="text-3xl font-bold text-center text-gray-700 dark:text-white mb-5">Welcome Back</div>
             <div className="text-xl font-bold text-center text-gray-600 dark:text-zinc-300 mb-5 font-family_body2">Login your Auction House account.</div>
-            <form className="flex flex-col gap-3 items-center">
+            <div className="flex flex-col gap-3 items-center">
                 <div className="flex">
                     <InboxIcon className="w-6 h-10 mx-2"/><input className="font-family_body2 text-lg min-w-[300px] w-1/5 h-9 px-3 border-b-2
-                    dark:bg--500" placeholder="Email Address"></input>
+                    dark:bg--500" placeholder="Email Address" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)}></input>
                 </div>
                 <div className="flex">
                     {!loginPwToggle ? <LockClosedIcon className="w-6 h-10 mx-2 cursor-pointer" onClick={() => setLoginPwToggle(!loginPwToggle)}/>
                      : <LockOpenIcon className="w-6 h-10 mx-2 cursor-pointer" onClick={() => setLoginPwToggle(!loginPwToggle)}/>}
                     <input type={loginPwToggle?"text":"password"} className="font-family_body2 text-lg min-w-[300px] w-1/5 h-9 px-3 border-b-2
-                    " placeholder="Password"></input>
+                    " placeholder="Password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)}></input>
                 </div>
+                <div className="text-base text-rose-600 text-center">{loginErrorMsg}</div>
                 <button type="submit" className="slate-100 min-w-[180px] rounded-md shadow-sm text-lg font-family_body2 my-2
                 bg-gradient-to-t from-emerald-100 via-green-400 to-teal-300
-                dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500">Login</button>
+                dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500" onClick={() => login()}>Login</button>
                 <div className="text-center cursor-pointer slate-100 min-w-[180px] rounded-md shadow-sm text-lg font-family_body2 mb-1
                 bg-gradient-to-t from-zinc-100 via-stone-300 to-neutral-300
                 dark:bg-gradient-to-t dark:from-zinc-400 dark:via-stone-500 dark:to-neutral-500">Login as Guest</div>
-            </form>
+            </div>
             <div className="border mx-6 my-3" />
             <div className="flex justify-center text-center text-lg font-family_body2 
             dark:text-gray-200">Don't have an account?
             <div className="ml-2 cursor-pointer text-sky-500
-            dark:text-sky-400" onClick={() => setLoginToggle(!loginToggle)}>Register</div>
+            dark:text-sky-400" onClick={() => pageSwitch()}>Register</div>
             </div>
         </div>
         )
@@ -99,7 +133,7 @@ const Login = () => {
             <div className="flex justify-center text-center text-lg font-family_body2 
             dark:text-gray-200">Already have an account?
               <div className="ml-2 cursor-pointer text-sky-500
-              dark:text-sky-400" onClick={() => setLoginToggle(!loginToggle)}>Login</div>
+              dark:text-sky-400" onClick={() => pageSwitch()}>Login</div>
             </div>
         </div>
         )

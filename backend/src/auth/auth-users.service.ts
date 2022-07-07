@@ -61,7 +61,9 @@ export class AuthUsersService {
             email: checkInput.email,
             password: hashedpassword,
             balance: 1000000,
-            currentItem: []
+            postingItem: [],
+            biddingItem: [],
+            winningItem: [],
         }
         this.create(signupInput)
         return errorMsgResult;

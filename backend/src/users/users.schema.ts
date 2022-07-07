@@ -5,7 +5,7 @@ export type UserDocument = User & Document;
 
 @Schema()
 export class User {
-  @Prop({unique: true})
+  @Prop()
   email: string;
 
   @Prop()
@@ -22,6 +22,12 @@ export class User {
   
   @Prop()
   currentItem: string[];
+
+  @Prop()
+  biddingItem: string[];
+
+  @Prop()
+  winningItem: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

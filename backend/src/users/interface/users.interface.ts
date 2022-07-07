@@ -7,4 +7,5 @@ export interface User extends Document {
     readonly password: string;
     readonly balance: number;
     readonly currentItem?: string[];
+    readonly winningItem?: string[];
 }
