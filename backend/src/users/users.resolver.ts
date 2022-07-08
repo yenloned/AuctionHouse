@@ -3,6 +3,7 @@ import { UsersService } from "./users.service"
 import { CreateUserDto } from "./dto/create-users.dto";
 import { UserInput } from "./inputs/user.input";
 import { FindUserInput } from "./inputs/find-user.input";
+import { JwtDecodeDto } from "./dto/jwt-decode.dto";
 
 @Resolver()
 export class UsersResolver {
@@ -23,6 +24,11 @@ export class UsersResolver {
     @Query(() => CreateUserDto)
     async find_user(@Args('id') id: FindUserInput){
         return this.usersService.findOne(id);
+    }
+
+    @Query(() => JwtDecodeDto)
+    async find_profile(@Args('input') jwt_token: string){
+        return this.usersService.findProfile(jwt_token);
     }
 
     @Mutation(() => CreateUserDto)

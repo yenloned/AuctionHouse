@@ -5,6 +5,7 @@ import { UsersResolver } from './users.resolver';
 import { UserSchema } from './users.schema';
 import { ApolloDriver } from '@nestjs/apollo';
 import { UsersService } from './users.service';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   providers: [UsersResolver, UsersService],
@@ -13,7 +14,8 @@ import { UsersService } from './users.service';
     GraphQLModule.forRoot({
         driver: ApolloDriver,
         autoSchemaFile: "schema.gql"
-    })
+    }),
+    JwtModule
   ]
 })
 export class UsersModule {}

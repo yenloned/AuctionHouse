@@ -14,6 +14,13 @@ type CreateUserDto {
   winningItem: [String!]
 }
 
+type JwtDecodeDto {
+  username: String!
+  sub: String!
+  iat: Int!
+  exp: Int!
+}
+
 type CreateItemDto {
   _id: ID!
   name: String!
@@ -39,6 +46,7 @@ type Query {
   hello: String!
   users: [CreateUserDto!]!
   find_user(id: FindUserInput!): CreateUserDto!
+  find_profile(input: String!): JwtDecodeDto!
   helloitems: String!
   items: [CreateItemDto!]!
   hello_auth: String!
