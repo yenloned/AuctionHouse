@@ -1,11 +1,12 @@
-import {Resolver, Query, Mutation, Args, Int} from "@nestjs/graphql"
+import {Resolver, Query, Mutation, Args, Int, ResolveField, Parent} from "@nestjs/graphql"
 import { UsersService } from "./users.service"
 import { CreateUserDto } from "./dto/create-users.dto";
 import { UserInput } from "./inputs/user.input";
-import { FindUserInput } from "./inputs/find-user.input";
 import { JwtDecodeDto } from "./dto/jwt-decode.dto";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
+import { UseGuards } from "@nestjs/common";
 
-@Resolver()
+@Resolver(() => CreateUserDto)
 export class UsersResolver {
     constructor(
     private usersService: UsersService
@@ -22,13 +23,15 @@ export class UsersResolver {
     }
 
     @Query(() => CreateUserDto)
-    async find_user(@Args('id') id: FindUserInput){
+    async find_user(@Args('id') id: string){
         return this.usersService.findOne(id);
     }
 
-    @Query(() => JwtDecodeDto)
+    @Query(() => CreateUserDto)
+    @UseGuards(JwtAuthGuard)
     async find_profile(@Args('input') jwt_token: string){
-        return this.usersService.findProfile(jwt_token);
+        const userId = await this.usersService.findProfile(jwt_token);
+        return this.usersService.findOne(userId);
     }
 
     @Mutation(() => CreateUserDto)

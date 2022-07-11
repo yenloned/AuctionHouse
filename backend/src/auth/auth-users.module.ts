@@ -18,7 +18,7 @@ import { LocalStrategy } from './strategies/local.strategy';
       envFilePath: '.env.backend'
     }),
     JwtModule.register({
-      signOptions: {expiresIn: '60s'},
+      signOptions: {expiresIn: '3600s'},
       secret: process.env.JWT_SECRET
     }),
     UsersModule,

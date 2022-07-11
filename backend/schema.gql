@@ -3,7 +3,7 @@
 # ------------------------------------------------------
 
 type CreateUserDto {
-  _id: ID!
+  _id: String!
   firstname: String!
   lastname: String!
   email: String!
@@ -12,13 +12,6 @@ type CreateUserDto {
   currentItem: [String!]
   biddingItem: [String!]
   winningItem: [String!]
-}
-
-type JwtDecodeDto {
-  username: String!
-  sub: String!
-  iat: Int!
-  exp: Int!
 }
 
 type CreateItemDto {
@@ -45,15 +38,11 @@ type LoginResponse {
 type Query {
   hello: String!
   users: [CreateUserDto!]!
-  find_user(id: FindUserInput!): CreateUserDto!
-  find_profile(input: String!): JwtDecodeDto!
+  find_user(id: String!): CreateUserDto!
+  find_profile(input: String!): CreateUserDto!
   helloitems: String!
   items: [CreateItemDto!]!
   hello_auth: String!
-}
-
-input FindUserInput {
-  _id: String!
 }
 
 type Mutation {

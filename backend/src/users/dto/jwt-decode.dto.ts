@@ -1,4 +1,5 @@
 import { Int, Field, ObjectType} from "@nestjs/graphql";
+import { CreateUserDto } from "./create-users.dto";
 
 @ObjectType()
 export class JwtDecodeDto {
@@ -10,4 +11,6 @@ export class JwtDecodeDto {
   readonly iat: number;
   @Field(() => Int)
   readonly exp: number;
+  @Field(() => [CreateUserDto], {nullable: 'items'})
+  userdata: CreateUserDto[]
 }
