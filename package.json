@@ -7,8 +7,12 @@
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
+    "@cloudinary/react": "^1.4.1",
+    "@cloudinary/url-gen": "^1.8.0",
     "@heroicons/react": "^1.0.6",
     "@nestjs/config": "^2.1.0",
+    "cloudinary": "^1.30.0",
+    "dotenv": "^16.0.1",
     "graphql": "^15.8.0",
     "next": "latest",
     "next-themes": "^0.2.0",

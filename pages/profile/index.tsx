@@ -35,20 +35,35 @@ const userPage = () => {
     if (error) return "Error occured"
     if (!data) return "Data loading"
 
+    const { find_profile } = data;
+
     return(
-        <div className="flex flex-col text-center m-8 ml-[10vw] mr-[10vw] gap-5">
+        <div className="flex flex-col m-8 ml-[10vw] mr-[10vw] gap-5 text-center">
             <div className="flex flex-row min-h-[180px] gap-5">
-                <div className="basis-1/2 text-lg py-4 rounded-xl bg-gray-100 shadow-xl
-                dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">{data.find_profile.email}</div>
-                <div className="basis-1/2 text-lg py-4 rounded-xl bg-gray-100 shadow-xl
-                dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">{data.find_profile.balance}</div>
+                <div className="basis-1/2 text-lg py-8 rounded-xl bg-gray-100 shadow-xl
+                dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">
+                    <div className="flex flex-row justify-evenly">
+                        <div>Icon</div>
+                        <div>
+                            <div>{find_profile.firstname} {find_profile.lastname}</div>
+                            <div>{find_profile.email}</div>
+                        </div>
+                    </div>
+                </div>
+                <div className="basis-1/2 text-lg py-8 rounded-xl bg-gray-100 shadow-xl
+                dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">{find_profile.balance}</div>
             </div>
-            <div className="text-lg py-4 min-h-[180px] rounded-xl bg-gray-100 shadow-xl
-            dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">{data.find_profile._id}</div>
-            <div className="text-lg py-4 min-h-[180px] rounded-xl bg-gray-100 shadow-xl
-            dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">{data.find_profile.firstname}</div>
-            <div className="text-lg py-4 min-h-[180px] rounded-xl bg-gray-100 shadow-xl
-            dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">{data.find_profile.lastname}</div>
+            <div className="text-lg py-10 min-h-[180px] rounded-xl bg-gray-100 shadow-xl font-family_header1
+            dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">
+                {find_profile.currentItem.length ? "there is" : "You have no Items on Bid currently"}
+            </div>
+            <div className="text-lg py-10 min-h-[180px] rounded-xl bg-gray-100 shadow-xl font-family_header1
+            dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">
+                {find_profile.currentItem.length ? "there is" : "You have no Bidding Items currently"}
+            </div>
+            <div className="text-lg py-10 min-h-[180px] rounded-xl bg-gray-100 shadow-xl font-family_header1
+            dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">
+                {find_profile.currentItem.length ? "there is" : "You have no Winning Items"}</div>
         </div>
     )
 }
