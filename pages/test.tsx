@@ -2,11 +2,10 @@ import { useState } from "react";
 import { imageProps } from "../interface/cloudinary";
 
 const Test: React.FC<imageProps> = ({images}) => {
-    console.log(images)
-    /*
+
     const [imageSrc, setImageSrc] = useState();
     const [uploadData, setUploadData] = useState();
-  
+  /*
     function handleOnChange(changeEvent: any) {
 
       const reader = new FileReader();
@@ -43,7 +42,6 @@ const Test: React.FC<imageProps> = ({images}) => {
       setImageSrc(data.secure_url);
       setUploadData(data);
     }
-
     <form method="post" onChange={handleOnChange} onSubmit={handleOnSubmit}>
         <p>
             <input type="file" name="file" />
@@ -60,7 +58,7 @@ const Test: React.FC<imageProps> = ({images}) => {
             <code><pre>{JSON.stringify(uploadData, null, 2)}</pre></code>
         )}
     </form>
-    */
+*/
 
     return(
         <>
@@ -69,6 +67,8 @@ const Test: React.FC<imageProps> = ({images}) => {
             {images.map((data: any) => {
                 return (
                     <>
+                    
+                        
                         <img src={data.image}></img>
                     </>
                 )
