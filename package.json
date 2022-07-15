@@ -22,7 +22,7 @@
     "type-graphql": "^1.1.1"
   },
   "devDependencies": {
-    "@types/node": "17.0.35",
+    "@types/node": "^17.0.35",
     "@types/react": "18.0.9",
     "@types/react-dom": "18.0.5",
     "autoprefixer": "^10.4.7",

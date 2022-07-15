@@ -5,6 +5,8 @@ import useSWR from "swr"
 
 import { CloudUploadIcon, UploadIcon } from "@heroicons/react/solid"
 
+const name = process.env.CLOUDINARY_NAME
+
 const fetcher = async () =>{
     const jwt_token = typeof window !== 'undefined' ? localStorage.getItem('jwt_token') : null
     const client = new ApolloClient({
@@ -73,21 +75,22 @@ const userPage = () => {
       for ( const file of fileInput.files ) {
         formData.append('file', file);
       }
-      console.log(formData)
       
-      //TODO: replace it with secret + implement SHA1/256 function
+      /*TODO: send it to backend to upload images (with process.env)
+      */
       var timestamp = new Date().getTime();
+
+      console.log(timestamp)
 
       formData.append('upload_preset', 'auction-house-icons');
       formData.append('public_id', find_profile._id);
-      //formData.append('signature', '98907d8ebf3a8e686d9b5d076c1b3a6722caca9d');
-      formData.append('timestamp', '1657707504298');
-      //formData.append('cloud_name', '');
-      //formData.append('api_key', '');
-      //formData.append('api_secret', '');
-      console.log(formData)
+      formData.append('signature', '98907d8ebf3a8e686d9b5d076c1b3a6722caca9d');
+      formData.append('timestamp', String(timestamp));
+      formData.append('cloud_name', '');
+      formData.append('api_key', `${process.env.CLOUDINARY_KEY}`);
+      formData.append('api_secret', '');
   
-      const imgData = await fetch('https://api.cloudinary.com/v1_1/auction-house/image/upload', {
+      const imgData = await fetch(`https://api.cloudinary.com/v1_1/auction-house/image/upload`, {
         method: 'POST',
         body: formData,
       }).then(r => r.json());
