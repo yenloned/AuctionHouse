@@ -2,7 +2,6 @@ import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
 import { useRouter } from "next/router"
 import { useState } from "react"
 import useSWR from "swr"
-
 import { CloudUploadIcon, UploadIcon } from "@heroicons/react/solid"
 
 const name = process.env.CLOUDINARY_NAME
@@ -66,29 +65,42 @@ const userPage = () => {
     }
   
     async function uploadImgSubmit(event: any) {
-      event.preventDefault();
-      const form = event.currentTarget;
-      const fileInput: any = Array.from(form.elements).find(({ name }: any) => name === 'avatar_upload');
+        event.preventDefault();
+        const form = event.currentTarget;
+        const fileInput: any = Array.from(form.elements).find(({ name }: any) => name === 'avatar_upload');
 
-      const formData = new FormData();
-  
-      for ( const file of fileInput.files ) {
-        formData.append('file', file);
-      }
-      
-      /*TODO: send it to backend to upload images (with process.env)
-      */
+        const formData = new FormData();
+/*
+        const imgDataForBackend = {
+            upload_preset: "auction-house-icons",
+            file: fileInput.files[0],
+            public_id: find_profile._id
+        }
+        console.log(fileInput.files[0])
+*/
+        for ( const fileData of fileInput.files ) {
+            formData.append("upload_preset", "auction-house-icons")
+            formData.append('public_id', find_profile._id)
+            formData.append("file", fileData)
+        }
+
+        console.log(fileInput.files[0])
+        const imgData = await fetch(`http://localhost:5000/cloudinary/uploadIcon`, {
+        method: 'POST',
+        body: formData
+        }).then(r => r.json());
+
+
+     /*
       var timestamp = new Date().getTime();
-
-      console.log(timestamp)
 
       formData.append('upload_preset', 'auction-house-icons');
       formData.append('public_id', find_profile._id);
       formData.append('signature', '98907d8ebf3a8e686d9b5d076c1b3a6722caca9d');
       formData.append('timestamp', String(timestamp));
-      formData.append('cloud_name', '');
-      formData.append('api_key', `${process.env.CLOUDINARY_KEY}`);
-      formData.append('api_secret', '');
+      formData.append('cloud_name', 'auction-house');
+      formData.append('api_key', `544631977949798`);
+      formData.append('api_secret', 'IDVXhNL3iRm92i0VTVl-OFh-ZtA');
   
       const imgData = await fetch(`https://api.cloudinary.com/v1_1/auction-house/image/upload`, {
         method: 'POST',
@@ -99,6 +111,7 @@ const userPage = () => {
   
       setImageSrc(imgData.secure_url);
       setUploadData(imgData);
+      */
     }
 
     const {data, error} = useSWR('profile', fetcher);
