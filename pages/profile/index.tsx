@@ -54,7 +54,7 @@ const userPage = () => {
             setImageErrorMsg("")
             image.onload = function(){
                 if(image.height < 128 || image.width < 128){
-                    setImageSrc(null);
+                    setImageSrc("");
                     setImageErrorMsg("Your Avatar should be at least 128*128 pixels");
                 }
             }
@@ -69,40 +69,25 @@ const userPage = () => {
         event.preventDefault();
         const form = event.currentTarget;
         const fileInput: any = Array.from(form.elements).find(({ name }: any) => name === 'avatar_upload');
-        const token = localStorage.getItem("jwt_token")
+        const jwt_token = localStorage.getItem("jwt_token")
         if(!(/^image\/.*/.test(fileInput.files[0].type))){
             return setImageErrorMsg("Invalid File Type. Please try again.")
         }
-
-        const imgData = await fetch(`http://localhost:5000/cloudinary/uploadIcon`, {
-            method: 'POST',
-            body: JSON.stringify({id:find_profile._id}),
-            headers: {
-                "Content-Type": 'application/json',
-                Authorization: `Bearer ${token}`
-            }
-        }).then(r => r.json());
-
-        
         const formData = new FormData();
-        const imageData = imgData.data
 
-        for ( const fileData of fileInput.files ) {
-            formData.append("upload_preset", "auction-house-icons")
-            formData.append('public_id', `${find_profile._id}_icon`)
-            formData.append("file", fileData)
-        }
-        console.log(fileInput.files[0])
-        for ( const [key, value] of Object.entries(imageData)){
-            formData.append(`${key}`, `${value}`)
-        }
-  
-      const uploadResult = await fetch(`https://api.cloudinary.com/v1_1/auction-house/image/upload`, {
+      formData.append("file", fileInput.files[0])
+      const uploadResult = await fetch(`http://localhost:5000/cloudinary/uploadIcon`, {
         method: 'POST',
-        body: formData,
+        body: JSON.stringify({data:imageSrc, public_id: find_profile._id, upload_preset: "auction-house-icons"}),
+        headers: {
+            'Content-type': 'application/json',
+            authorization: jwt_token ? `Bearer ${jwt_token}` : ""
+        }
       }).then(r => r.json());
   
-      setImageSrc(uploadResult.secure_url);
+      if(uploadResult.secure_url){
+        setImageSrc(uploadResult.secure_url);
+      }
       setUploadData(uploadResult);
     }
 

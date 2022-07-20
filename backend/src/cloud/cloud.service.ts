@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { createHash } from 'crypto';
 import { IconUpload } from './inputs/formdata.interface';
+import * as cloudinary from "cloudinary"
 
 @Injectable()
 export class CloudService {
@@ -17,25 +18,24 @@ export class CloudService {
     }
 
 
-    async cloudinaryUpload(formData: any, signature: string) {
-
-        formData.append("cloud_name", process.env.CLOUDINARY_NAME);
-        formData.append("api_key", process.env.CLOUDINARY_KEY);
-        formData.append("api_secret", process.env.CLOUDINARY_SECRET);
-        formData.append("signature", signature);
-
+    async cloudinaryUpload(fileInput: IconUpload, signature: string, timestamp: number) {
         try{
-        const imgData = await fetch(`https://api.cloudinary.com/v1_1/auction-house/image/upload`, {
-            method: 'POST',
-            body: formData,
-          }).then(r => r.json());
-          if (imgData.secure_url){
-            return imgData.secure_url
-          }else{
-            return "Upload Failed. Please try again later."
-          }
-        }catch(e){
-            return "Error occured while uploading, please try again"
+          const uploadResult = await cloudinary.v2.uploader.upload(fileInput.data, {
+            upload_preset: fileInput.upload_preset,
+            public_id: fileInput.public_id,
+            timestamp: timestamp,
+            signature: signature,
+            cloud_name: process.env.CLOUDINARY_NAME,
+            api_key: process.env.CLOUDINARY_KEY,
+            api_secret: process.env.CLOUDINARY_SECRET
+          });
+            if (uploadResult.secure_url){
+              return uploadResult
+            }else{
+              return "We have encountered error. Please try again later."
+            }
+          }catch(e){
+            return "Invalid Upload. Please try again"
         }
     }
 }

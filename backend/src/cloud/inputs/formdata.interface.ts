@@ -1,13 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql/dist/decorators";
 
-@ObjectType()
-export class IconUpload {
-    @Field()
+export type IconUpload = {
+    data: string;
     upload_preset: string;
-
-    @Field()
-    file: any;
-
-    @Field()
     public_id: string;
 }
