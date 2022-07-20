@@ -1,10 +1,12 @@
 import { fpsRange } from '@cloudinary/url-gen/actions/transcode';
-import { Body, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors, ValidationPipe } from '@nestjs/common';
 import { CloudService } from './cloud.service';
 import { FilesInterceptor } from "@nestjs/platform-express"
-import { IconUpload } from './inputs/formdata.interface';
-import { Observable } from 'rxjs';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import  * as FormData  from 'form-data';
+import * as cloudinary from "cloudinary"
+import { FormDataRequest } from 'nestjs-form-data';
+
 
 @Controller('cloudinary')
 export class CloudController {
@@ -15,29 +17,29 @@ export class CloudController {
         return this.cloudService.homePage();
     }
 
-
-    //https://stackoverflow.com/questions/61148959/fileinterceptor-and-body-issue-in-nestjs-upload-a-file-and-data-in-a-request
-
     //@Body() iconUpload
     @Post('uploadIcon')
     @UseGuards(JwtAuthGuard)
-    @UseInterceptors(FilesInterceptor('file'))
-    uploadIcon(@UploadedFile() file): Observable<Object>{
-        const timestamp = new Date().getTime();
-        //TODO/Reminder: this approach works, however NESTJS is not able to use FormData <- fix this!!!!!!!
-        /*if(body){
-            console.log(file)
-            console.log(body)
-        }
-
-        return body;*/
-        console.log(file)
-        return file
+    //@FormDataRequest() //@Body() file2: FormDataTestDto, 
+    //@UseInterceptors(FilesInterceptor('file'))
+    async uploadIcon(/*@UploadedFile() file,*/ @Body() body){
+        const timenow = new Date().getTime();
 
         //const id = iconUpload.get("public_id")
         //const preset = iconUpload.get("upload_preset")
 
-        const signature = this.cloudService.cloudinary_sign("id", timestamp, "auction-house-icons")
+        const public_id = body.id + "_icon"
+
+        const signed = this.cloudService.cloudinary_sign(public_id, timenow, "auction-house-icons")
+
+        return{data: {
+                timestamp: timenow,
+                signature: signed,
+                cloud_name: process.env.CLOUDINARY_NAME,
+                api_key: process.env.CLOUDINARY_KEY,
+                api_secret: process.env.CLOUDINARY_SECRET
+            }
+        }
 
         //return this.cloudService.cloudinaryUpload(iconUpload, signature);
     }

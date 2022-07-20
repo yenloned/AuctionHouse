@@ -15,6 +15,7 @@ const fetcher = async () =>{
             authorization: jwt_token ? `Bearer ${jwt_token}` : ""
         }
       })
+    
     const {data} = await client.query({
         query: gql
         `query{
@@ -68,50 +69,41 @@ const userPage = () => {
         event.preventDefault();
         const form = event.currentTarget;
         const fileInput: any = Array.from(form.elements).find(({ name }: any) => name === 'avatar_upload');
-
-        const formData = new FormData();
-/*
-        const imgDataForBackend = {
-            upload_preset: "auction-house-icons",
-            file: fileInput.files[0],
-            public_id: find_profile._id
-        }
-        console.log(fileInput.files[0])
-*/
-        for ( const fileData of fileInput.files ) {
-            formData.append("upload_preset", "auction-house-icons")
-            formData.append('public_id', find_profile._id)
-            formData.append("file", fileData)
+        const token = localStorage.getItem("jwt_token")
+        if(!(/^image\/.*/.test(fileInput.files[0].type))){
+            return setImageErrorMsg("Invalid File Type. Please try again.")
         }
 
-        console.log(fileInput.files[0])
         const imgData = await fetch(`http://localhost:5000/cloudinary/uploadIcon`, {
-        method: 'POST',
-        body: formData
+            method: 'POST',
+            body: JSON.stringify({id:find_profile._id}),
+            headers: {
+                "Content-Type": 'application/json',
+                Authorization: `Bearer ${token}`
+            }
         }).then(r => r.json());
 
+        
+        const formData = new FormData();
+        const imageData = imgData.data
 
-     /*
-      var timestamp = new Date().getTime();
-
-      formData.append('upload_preset', 'auction-house-icons');
-      formData.append('public_id', find_profile._id);
-      formData.append('signature', '98907d8ebf3a8e686d9b5d076c1b3a6722caca9d');
-      formData.append('timestamp', String(timestamp));
-      formData.append('cloud_name', 'auction-house');
-      formData.append('api_key', `544631977949798`);
-      formData.append('api_secret', 'IDVXhNL3iRm92i0VTVl-OFh-ZtA');
+        for ( const fileData of fileInput.files ) {
+            formData.append("upload_preset", "auction-house-icons")
+            formData.append('public_id', `${find_profile._id}_icon`)
+            formData.append("file", fileData)
+        }
+        console.log(fileInput.files[0])
+        for ( const [key, value] of Object.entries(imageData)){
+            formData.append(`${key}`, `${value}`)
+        }
   
-      const imgData = await fetch(`https://api.cloudinary.com/v1_1/auction-house/image/upload`, {
+      const uploadResult = await fetch(`https://api.cloudinary.com/v1_1/auction-house/image/upload`, {
         method: 'POST',
         body: formData,
       }).then(r => r.json());
-
-      console.log(imgData)
   
-      setImageSrc(imgData.secure_url);
-      setUploadData(imgData);
-      */
+      setImageSrc(uploadResult.secure_url);
+      setUploadData(uploadResult);
     }
 
     const {data, error} = useSWR('profile', fetcher);
@@ -143,9 +135,6 @@ const userPage = () => {
                                 <button className="px-3 text-base font-family_body1 rounded-md bg-gradient-to-t from-emerald-100 via-green-400 to-teal-300 shadow-lg shadow-emerald-300/60
                                 dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500 dark:shadow-lg dark:shadow-cyan-500/60">Confirm</button>
                                 </p>
-                            )}
-                            {uploadData && (
-                                <code><pre>{JSON.stringify(uploadData, null, 2)}</pre></code>
                             )}
                         </form>
                         </div>
