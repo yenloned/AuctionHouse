@@ -1,7 +1,7 @@
 // tailwind.config.js
 module.exports = {
   content: ['./pages/**/*.{js,ts,jsx,tsx}', './comps/**/*.{js,ts,jsx,tsx}'],
-  darkMode: ['class', '[data-mode="dark"]'],
+  darkMode: 'class',
   theme: {
     extend: {},
     fontFamily: {
