@@ -20,4 +20,6 @@ export class CreateUserDto {
   readonly biddingItem?: string[];
   @Field(() => [String], { nullable: true })
   readonly winningItem?: string[];
+  @Field()
+  readonly iconURL: string;
 }

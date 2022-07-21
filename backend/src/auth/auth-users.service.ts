@@ -64,6 +64,7 @@ export class AuthUsersService {
             postingItem: [],
             biddingItem: [],
             winningItem: [],
+            iconURL: "https://res.cloudinary.com/auction-house/image/upload/v1657615446/icons/default_icon_x0v5ke.png"
         }
         this.create(signupInput)
         return errorMsgResult;

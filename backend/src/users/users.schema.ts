@@ -28,6 +28,9 @@ export class User {
 
   @Prop()
   winningItem: string[];
+
+  @Prop()
+  iconURL: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

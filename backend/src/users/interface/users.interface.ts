@@ -8,4 +8,5 @@ export interface User extends Document {
     readonly balance: number;
     readonly currentItem?: string[];
     readonly winningItem?: string[];
+    readonly iconURL: string;
 }

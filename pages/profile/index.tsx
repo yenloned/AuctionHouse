@@ -28,6 +28,7 @@ const fetcher = async () =>{
             currentItem
             biddingItem
             winningItem
+            iconURL
             }
         }`
     })
@@ -39,6 +40,8 @@ const userPage = () => {
 
     const [imageSrc, setImageSrc] = useState<ArrayBuffer | string | null>();
     const [imageErrorMsg, setImageErrorMsg] = useState("")
+    const [imageButton, setImageButton] = useState(false)
+    const [imagePending, setImagePending] = useState(false)
     const [uploadData, setUploadData] = useState();
   
     function uploadImgChange(changeEvent: any) {
@@ -47,6 +50,8 @@ const userPage = () => {
       const image: any = new Image();
 
       reader.onload = function(onLoadEvent) {
+
+        setImageButton(!imageButton)
 
         if(onLoadEvent.target){
             image.src = onLoadEvent.target.result;
@@ -59,13 +64,14 @@ const userPage = () => {
                 }
             }
         }
-        setUploadData(undefined);
+        setUploadData(image.src);
       }
   
       reader.readAsDataURL(changeEvent.target.files[0]);
     }
   
     async function uploadImgSubmit(event: any) {
+        setImagePending(true)
         event.preventDefault();
         const form = event.currentTarget;
         const fileInput: any = Array.from(form.elements).find(({ name }: any) => name === 'avatar_upload');
@@ -87,10 +93,12 @@ const userPage = () => {
   
       if(uploadResult.secure_url){
         setImageSrc(uploadResult.secure_url);
+        setUploadData(uploadResult);
       }
-      setUploadData(uploadResult);
+      setImageButton(!imageButton)
+      setImagePending(false)
     }
-
+        
     const {data, error} = useSWR('profile', fetcher);
     if (error) router.push('/account/login')
     if (!data) return "Data loading..."
@@ -104,7 +112,7 @@ const userPage = () => {
                     <div className="flex flex-row justify-evenly">
                         <div>
                         <form method="post" onChange={uploadImgChange} onSubmit={uploadImgSubmit}>
-                            <img className="w-[128px] h-[128px]" width="128" height="128" src={imageSrc}/>
+                            <img className="w-[128px] h-[128px]" width="128" height="128" src={!uploadData ? find_profile.iconURL : imageSrc}/>
                             <div className="flex flex-row justify-center">
                                 <label className="cursor-pointer text-sm underline" htmlFor="avatar_upload">
                                     Change Avatar
@@ -115,10 +123,10 @@ const userPage = () => {
                             <div className="text-sm text-rose-600 text-center px-3">
                                 {imageErrorMsg}
                             </div>         
-                            {imageSrc && !uploadData && (
+                            {uploadData && imageButton && (
                                 <p>
                                 <button className="px-3 text-base font-family_body1 rounded-md bg-gradient-to-t from-emerald-100 via-green-400 to-teal-300 shadow-lg shadow-emerald-300/60
-                                dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500 dark:shadow-lg dark:shadow-cyan-500/60">Confirm</button>
+                                dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500 dark:shadow-lg dark:shadow-cyan-500/60">{imagePending ? "Pending..." : "Confirm"}</button>
                                 </p>
                             )}
                         </form>

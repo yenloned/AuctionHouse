@@ -2,10 +2,12 @@ import { Module } from "@nestjs/common";
 import { CloudService } from './cloud.service';
 import { CloudController } from './cloud.controller';
 import { CloudinaryProvider } from "./cloud.provider";
-import { NestjsFormDataModule } from "nestjs-form-data";
+import { MongooseModule } from "@nestjs/mongoose";
+import { UserSchema } from "src/users/users.schema";
 
 @Module({
-    imports: [NestjsFormDataModule],
+    imports: [
+        MongooseModule.forFeature([{ name: 'User', schema: UserSchema }])],
     controllers: [CloudController],
     providers: [CloudinaryProvider, CloudService],
 })
