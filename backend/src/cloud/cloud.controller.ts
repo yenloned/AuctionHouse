@@ -20,7 +20,7 @@ export class CloudController {
         try{
             JSON.parse(JSON.stringify(body))
         }catch(e){
-            return "File Upload Failed. Please Try if the file format is correct."
+            return "File Upload Failed. Please check if the file format is correct."
         }
         const fileInput = body
 
