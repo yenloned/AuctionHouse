@@ -24,7 +24,11 @@ export class UsersService {
   }
 
   async findOne(userid: string): Promise<User> {
-    return this.userModel.findOne({"_id": userid});
+    try{
+      return this.userModel.findOne({"_id": userid});
+    }catch(e){
+      return e
+    }
   }
 
   async findProfile(jwt_token: string){

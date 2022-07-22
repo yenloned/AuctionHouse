@@ -1,5 +1,5 @@
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
-import { UserRegister } from "../../../interface/userAuth";
+import { UserRegister } from "../../interface/userAuth";
 
 export const signupUser = async (signupInput: UserRegister) =>{
     const client = new ApolloClient({

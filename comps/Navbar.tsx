@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useTheme } from "next-themes"
 import { MoonIcon, SunIcon } from "@heroicons/react/solid"
+import LoginStatusContext from "../context/userLogin"
 
 const NavBar = () => {
+
+  const loginStatus = useContext(LoginStatusContext)
 
   const current_route = useRouter();
 
@@ -14,6 +17,10 @@ const NavBar = () => {
   useEffect(() => {
     setMounted(true)
   })
+
+  useEffect(() => {
+    if(loginStatus?.isLoggedIn){}
+  }, [])
 
   const renderThemeChanger = () => {
     if (!mounted){
@@ -50,9 +57,16 @@ const NavBar = () => {
         </div>
         <div className="flex text-base justify-center font-family_header1">
           {renderThemeChanger()}
+          {
+          loginStatus?.isLoggedIn ?
+          <Link href="/profile">
+          <div className="mx-8 cursor-pointer">Profile</div>
+          </Link>
+          :
           <Link href="/account/login">
           <div className="mx-8 cursor-pointer">Login</div>
           </Link>
+          }
         </div>
       </nav>
     )

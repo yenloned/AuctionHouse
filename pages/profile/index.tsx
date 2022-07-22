@@ -2,7 +2,7 @@ import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
 import { useRouter } from "next/router"
 import { useState } from "react"
 import useSWR from "swr"
-import { CloudUploadIcon, UploadIcon } from "@heroicons/react/solid"
+import { UploadIcon } from "@heroicons/react/solid"
 
 const name = process.env.CLOUDINARY_NAME
 
@@ -59,7 +59,8 @@ const userPage = () => {
             setImageErrorMsg("")
             image.onload = function(){
                 if(image.height < 128 || image.width < 128){
-                    setImageSrc("");
+                    setImageSrc(undefined);
+                    setUploadData(undefined);
                     setImageErrorMsg("Your Avatar should be at least 128*128 pixels");
                 }
             }
@@ -98,7 +99,8 @@ const userPage = () => {
       setImageButton(!imageButton)
       setImagePending(false)
     }
-        
+    
+    //check JWT and return the profile data (if valid)
     const {data, error} = useSWR('profile', fetcher);
     if (error) router.push('/account/login')
     if (!data) return "Data loading..."
