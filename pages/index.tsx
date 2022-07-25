@@ -48,6 +48,7 @@ type InUserProps = {
 */
 
 const Home = () => {
+  /*
   const loginStatus = useContext(LoginStatusContext)
 
   useEffect(() => {
@@ -56,6 +57,7 @@ const Home = () => {
     }
     //console.log(checkJWT(localStorage.getItem("jwt_token"), "62d8ba58454ca9ed6b41f5a0"))
   }, [])
+  */
   return (
     <>
       <Homeheader/>

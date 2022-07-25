@@ -13,7 +13,7 @@ export const validUser = async (userId: string) => {
             _id
           }
         }`
-    })
+      })
       return data;
     }catch(e: any){
         return e.message

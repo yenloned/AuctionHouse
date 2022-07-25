@@ -33,4 +33,30 @@ export class AuthResolver {
     async loginUser(@Args('input') loginInput: LoginInput){
         return this.authUsersService.login(loginInput);
     }
+
+    //Register Guest Account
+    @Mutation(() => String)
+    async createGuestUser (){
+        const data = await this.authUsersService.createGuestAccount()
+        if(data.email){
+            return data.email;
+        }
+        return ""
+    }
+
+    //Login Guest Account
+    @Mutation(() => LoginResponse)
+    async loginGuestUser (@Args('input') email: string){
+        try{
+            const guestInput = {
+                email: email,
+                password: process.env.GUEST_PASSWORD
+            }
+            return this.authUsersService.login(guestInput);
+        }catch(e){
+            return e;
+        }
+    }
+        
+
 }

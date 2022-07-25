@@ -5,6 +5,7 @@ import { UserInput } from "./inputs/user.input";
 import { JwtDecodeDto } from "./dto/jwt-decode.dto";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { UseGuards } from "@nestjs/common";
+import { StringDecoder } from "string_decoder";
 
 @Resolver(() => CreateUserDto)
 export class UsersResolver {

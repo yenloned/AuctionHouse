@@ -7,3 +7,9 @@ export type allUserData = {
     biddingItem: string[];
     winningItem: string[];
 }
+
+export type userDataForNavbar = {
+    userId: string;
+    userIcon: string;
+    userBalance: number;
+}

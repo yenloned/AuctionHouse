@@ -51,6 +51,8 @@ type Mutation {
   createItem(input: ItemInput!): CreateItemDto!
   registerUser(input: RegisterInput!): CreateUserDto!
   loginUser(input: LoginInput!): LoginResponse!
+  createGuestUser: String!
+  loginGuestUser(input: String!): LoginResponse!
 }
 
 input UserInput {

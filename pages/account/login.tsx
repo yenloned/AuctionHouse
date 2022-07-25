@@ -4,6 +4,7 @@ import { signupUser } from "../../functions/api/signupUser"
 import { loginUser } from "../../functions/api/loginUser"
 import { useRouter } from "next/router"
 import LoginStatusContext from "../../context/userLogin"
+import { loginGuestUser, registerGuestUser } from "../../functions/api/loginGuestUser"
 
 const Login = () => {
 
@@ -44,6 +45,20 @@ const Login = () => {
       window.location.replace("/profile")
     }else{
       setLoginErrorMsg(loginResult)
+    }
+  }
+
+  //Login as Guest
+  const loginAsGuest = async () => {
+    try{
+      const guestEmail = await registerGuestUser();
+      const loginResult = await loginGuestUser(guestEmail.createGuestUser);
+      if (loginResult.loginGuestUser){
+        localStorage.setItem('jwt_token', loginResult.loginGuestUser.access_token)
+        window.location.replace("/profile")
+      }
+    }catch(e){
+      return e;
     }
   }
 
@@ -102,7 +117,7 @@ const Login = () => {
               dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500" onClick={() => login(loginEmail, loginPassword)}>Login</button>
               <div className="text-center cursor-pointer slate-100 min-w-[180px] rounded-md shadow-sm text-lg font-family_body2 mb-1
               bg-gradient-to-t from-zinc-100 via-stone-300 to-neutral-300
-              dark:bg-gradient-to-t dark:from-zinc-400 dark:via-stone-500 dark:to-neutral-500">Login as Guest</div>
+              dark:bg-gradient-to-t dark:from-zinc-400 dark:via-stone-500 dark:to-neutral-500" onClick={() => loginAsGuest()}>Login as Guest</div>
           </div>
           <div className="border mx-6 my-3" />
           <div className="flex justify-center text-center text-lg font-family_body2 

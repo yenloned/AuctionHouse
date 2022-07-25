@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { salt } from './hashing/salt';
 import { LoginInput } from './inputs/login.input';
 import { JwtService } from '@nestjs/jwt';
+import { v4 as uuidv4 } from "uuid"
 
 @Injectable()
 export class AuthUsersService {
@@ -19,7 +20,6 @@ export class AuthUsersService {
     ){}
 
     //Register / SignUp
-
     async create(createUserDto: UserInput): Promise<User> {
         const createdUser = new this.userModel(createUserDto);
         return createdUser.save();
@@ -72,7 +72,6 @@ export class AuthUsersService {
 
 
     // Login
-
     async checkLoginInput(inputEmail: string, inputPassword: string){
         //Check if user existed and password correct
         const allUserInfo = await this.userModel.findOne({"email": inputEmail})
@@ -99,6 +98,31 @@ export class AuthUsersService {
             }),
             user: userInfo
         }
+    }
 
+    // Register Guest Account
+    async createGuestAccount(){
+        const hashedpassword = await bcrypt.hash(process.env.GUEST_PASSWORD, await salt())
+        const fakeGmailForGuest = Math.random().toString(36).substring(2,10) + "@gmail.com"
+        const signupInput = {
+            firstname: "Guest",
+            lastname: Math.random().toString(36).substring(2,10),
+            email: fakeGmailForGuest,
+            password: hashedpassword,
+            balance: 1000000,
+            postingItem: [],
+            biddingItem: [],
+            winningItem: [],
+            iconURL: "https://res.cloudinary.com/auction-house/image/upload/v1657615446/icons/default_icon_x0v5ke.png"
+        }
+        try{
+            this.create(signupInput);
+            return {
+                email: fakeGmailForGuest,
+                password: process.env.GUEST_PASSWORD
+            }
+        }catch(e){
+            return e;
+        }
     }
 }
