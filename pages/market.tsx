@@ -4,23 +4,32 @@ import { io, Socket } from "socket.io-client"
 
 const Market = () => {
   const [searchItem, setSearchItem] = useState("")
-  const [test, setTest] = useState("")
+  //socketio draft
+  /*
+  const [test, setTest] = useState("aaaa")
   const [test2, setTest2] = useState("")
-  const socket = io("http://localhost:5001")
+  const socket = io("http://localhost:5001", {transports: ['websocket']})
+
+  const tdata = {message: "hello"}
   
 
   const handlepost = () => {
-    socket.emit("message", test)
+    console.log("clicked")
+    socket.emit('send-message', tdata, (r: any) =>{
+      console.log(r)
+    })
   }
 
-  socket.on("message", () =>{
-    console.log("OK")
+  socket.on('message', (message: any) =>{
+    console.log(message)
     handleNewMessage(socket.id)
+    handleNewMessage(message)
   })
 
-  const handleNewMessage = (message: string) => {
+  const handleNewMessage = (message: any) => {
     setTest2(message)
   }
+  */
 
   return (
     <div>
@@ -33,9 +42,6 @@ const Market = () => {
         <SearchIcon className="w-6 h-6 mx-4 cursor-pointer" onClick={() => console.log(searchItem)}/>
       </div>
       </form>
-      <input type="text" id="message" onChange={(e) => setTest(e.target.value)}/>
-      <button onClick={() => handlepost()}>handle</button>
-      {test2}
     </div>
   )
   }

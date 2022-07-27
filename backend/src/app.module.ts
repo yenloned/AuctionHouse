@@ -9,7 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ItemsModule } from './items/items.module';
 import { AuthModule } from './auth/auth-users.module';
 import { CloudModule } from './cloud/cloud.module';
-import { MarketGateway } from './market/market.gateway';
+import { MarketModule } from './market/market.module';
 
 @Module({
   imports: [
@@ -24,9 +24,10 @@ import { MarketGateway } from './market/market.gateway';
     UsersModule,
     ItemsModule,
     AuthModule,
-    CloudModule
+    CloudModule,
+    MarketModule
   ],
   controllers: [AppController],
-  providers: [AppService, MarketGateway],
+  providers: [AppService],
 })
 export class AppModule {}

@@ -1,10 +1,7 @@
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
-import { useRouter } from "next/router"
 import { useState } from "react"
 import useSWR from "swr"
 import { UploadIcon } from "@heroicons/react/solid"
-
-const name = process.env.CLOUDINARY_NAME
 
 const fetcher = async () =>{
     const jwt_token = typeof window !== 'undefined' ? localStorage.getItem('jwt_token') : null
@@ -36,7 +33,6 @@ const fetcher = async () =>{
 }
 
 const userPage = () => {
-    const router = useRouter();
 
     const [imageSrc, setImageSrc] = useState<ArrayBuffer | string | null>();
     const [imageErrorMsg, setImageErrorMsg] = useState("")
@@ -102,7 +98,7 @@ const userPage = () => {
     
     //check JWT and return the profile data (if valid)
     const {data, error} = useSWR('profile', fetcher);
-    if (error) router.push('/account/login')
+    if (error) window.location.replace('/account/login')
     if (!data) return "Data loading..."
     const { find_profile } = data;
 

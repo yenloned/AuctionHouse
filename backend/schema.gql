@@ -19,11 +19,15 @@ type CreateItemDto {
   _id: ID!
   name: String!
   description: String!
+  owner_data: [CreateUserDto!]
   start_price: Int!
   per_price: Int!
-  end_price: Float
-  duration: Int!
+  current_price: Int
+  bidder_data: [CreateUserDto]!
+  end_price: Int
   start_time: Timestamp!
+  bidder_time: Timestamp
+  end_time: Timestamp!
 }
 
 """
@@ -43,6 +47,7 @@ type Query {
   find_profile(input: String!): CreateUserDto!
   helloitems: String!
   items: [CreateItemDto!]!
+  find_item(id: String!): CreateItemDto!
   hello_auth: String!
 }
 
@@ -70,11 +75,15 @@ input UserInput {
 input ItemInput {
   name: String!
   description: String!
+  owner_data: String!
   start_price: Int!
   per_price: Int!
+  current_price: Int
+  bidder_data: String
   end_price: Int
-  duration: Int!
   start_time: Timestamp!
+  bidder_time: Timestamp
+  end_time: Timestamp!
 }
 
 input RegisterInput {
