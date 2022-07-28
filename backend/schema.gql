@@ -19,21 +19,19 @@ type CreateItemDto {
   _id: ID!
   name: String!
   description: String!
-  owner_data: [CreateUserDto!]
+  owner_id: String!
+  owner_data: CreateUserDto
   start_price: Int!
   per_price: Int!
   current_price: Int
-  bidder_data: [CreateUserDto]!
+  bidder_id: String!
+  bidder_data: CreateUserDto
   end_price: Int
-  start_time: Timestamp!
-  bidder_time: Timestamp
-  end_time: Timestamp!
+  start_time: String!
+  bidder_time: String
+  end_time: String!
+  photo_URL: String!
 }
-
-"""
-`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
-"""
-scalar Timestamp
 
 type LoginResponse {
   access_token: String!
@@ -47,6 +45,7 @@ type Query {
   find_profile(input: String!): CreateUserDto!
   helloitems: String!
   items: [CreateItemDto!]!
+  findAll_items: [CreateItemDto!]!
   find_item(id: String!): CreateItemDto!
   hello_auth: String!
 }
@@ -75,16 +74,22 @@ input UserInput {
 input ItemInput {
   name: String!
   description: String!
-  owner_data: String!
+  owner_id: String!
   start_price: Int!
   per_price: Int!
   current_price: Int
-  bidder_data: String
+  bidder_id: String
   end_price: Int
   start_time: Timestamp!
   bidder_time: Timestamp
   end_time: Timestamp!
+  photo_URL: String!
 }
+
+"""
+`Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
+"""
+scalar Timestamp
 
 input RegisterInput {
   firstname: String!

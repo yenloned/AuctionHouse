@@ -10,8 +10,8 @@ import { ItemsService } from './items.service';
 @Resolver(() => CreateItemDto)
 export class ItemsResolver {
     constructor(
-        private itemsService: ItemsService
-        //private usersService: UsersService
+        private itemsService: ItemsService,
+        private usersService: UsersService
     ){}
 
     @Query(() => String)
@@ -29,15 +29,26 @@ export class ItemsResolver {
         return this.itemsService.create(input);
     }
 
+    @Query(() => [CreateItemDto])
+    async findAll_items(){
+        return this.itemsService.findAll_item()
+    }
+
     @Query(() => CreateItemDto)
     async find_item(@Args('id') id: string){
-        return this.itemsService.findOne(id)
+        return this.itemsService.findOne_item(id)
     }
-/*
+
     @ResolveField(() => CreateUserDto)
     async owner_data(@Parent() itemDto: CreateItemDto){
-        const { _id } = itemDto;
-        return this.usersService.findOne(_id)
+        const { owner_id } = itemDto;
+        return this.usersService.findOne(owner_id)
     }
-*/
+
+    @ResolveField(() => CreateUserDto)
+    async bidder_data(@Parent() itemDto: CreateItemDto){
+        const { bidder_id } = itemDto;
+        return this.usersService.findOne(bidder_id)
+    }
+
 }

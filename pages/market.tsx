@@ -1,8 +1,54 @@
 import { useEffect, useState } from "react"
 import { SearchIcon } from "@heroicons/react/solid"
 import { io, Socket } from "socket.io-client"
+import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
+import { addAbortSignal } from "stream"
+import { fetchAllItemsType } from "../interface/itemsFetching"
 
-const Market = () => {
+export async function getServerSideProps(){
+  const client = new ApolloClient({
+    uri: "http://localhost:5000/graphql/",
+    cache: new InMemoryCache(),
+  })
+  try{
+    const {data} = await client.query({
+        query: gql
+        `query{
+          findAll_items{
+            _id,
+            name,
+            description,
+            owner_data{
+              _id,
+              firstname,
+              lastname,
+              email,
+              iconURL
+            },
+            start_price,
+            per_price,
+            current_price,
+            bidder_data{
+              _id,
+              firstname,
+              lastname,
+              email,
+              iconURL
+            },
+            start_time,
+            end_time,
+            bidder_time,
+            photo_URL
+          }
+        }`
+    })
+    return { props: data };
+  }catch(e){
+    return { props: {}}
+  }
+}
+
+const Market = (props: fetchAllItemsType | null) => {
   const [searchItem, setSearchItem] = useState("")
   //socketio draft
   /*
@@ -42,6 +88,7 @@ const Market = () => {
         <SearchIcon className="w-6 h-6 mx-4 cursor-pointer" onClick={() => console.log(searchItem)}/>
       </div>
       </form>
+      <button onClick={() => {console.log(props)}}>aa</button>
     </div>
   )
   }

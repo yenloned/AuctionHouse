@@ -74,6 +74,7 @@ const userPage = () => {
         const fileInput: any = Array.from(form.elements).find(({ name }: any) => name === 'avatar_upload');
         const jwt_token = localStorage.getItem("jwt_token")
         if(!(/^image\/.*/.test(fileInput.files[0].type))){
+            setImagePending(false);
             return setImageErrorMsg("Invalid File Type. Please try again.")
         }
         const formData = new FormData();

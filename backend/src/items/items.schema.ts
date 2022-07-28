@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
+import { User, UserSchema } from 'src/users/users.schema';
 
 export type ItemDocument = Item & Document;
 
@@ -18,7 +19,7 @@ export class Item {
   @Prop()
   current_price?: number;
   @Prop()
-  current_bidder?: string;
+  bidder_id?: string;
   @Prop()
   end_price?: number;
   @Prop()
@@ -27,6 +28,8 @@ export class Item {
   bidder_time?: string;
   @Prop()
   end_time: string;
+  @Prop()
+  photo_URL: string;
 }
 
 export const ItemsSchema = SchemaFactory.createForClass(Item);
