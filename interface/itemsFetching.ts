@@ -1,5 +1,5 @@
 export type fetchAllItemsType = {
-    findAll_items: allItemsType
+    finalData: allItemsType[]
 }
 
 export type allItemsType = {
@@ -14,6 +14,7 @@ export type allItemsType = {
     start_time: string,
     end_time: string,
     bidder_time: string | null,
+    time_left: string | null,
     photo_URL: string
 }
 

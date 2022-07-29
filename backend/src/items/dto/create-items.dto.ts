@@ -35,6 +35,8 @@ export class CreateItemDto {
   readonly bidder_time?: string;
   @Field()
   readonly end_time: string;
+  @Field({nullable: true})
+  readonly time_left?: string;
   @Field()
   readonly photo_URL: string;
 }

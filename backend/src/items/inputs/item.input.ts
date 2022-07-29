@@ -26,6 +26,8 @@ export class ItemInput{
     readonly bidder_time?: string;
     @Field(() => GraphQLTimestamp)
     readonly end_time: string;
+    @Field({nullable: true})
+    readonly time_left: string;
     @Field()
     readonly photo_URL: string;
 }

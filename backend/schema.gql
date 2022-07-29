@@ -30,6 +30,7 @@ type CreateItemDto {
   start_time: String!
   bidder_time: String
   end_time: String!
+  time_left: String
   photo_URL: String!
 }
 
@@ -83,6 +84,7 @@ input ItemInput {
   start_time: Timestamp!
   bidder_time: Timestamp
   end_time: Timestamp!
+  time_left: String
   photo_URL: String!
 }
 

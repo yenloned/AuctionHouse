@@ -29,6 +29,8 @@ export class Item {
   @Prop()
   end_time: string;
   @Prop()
+  time_left?: string;
+  @Prop()
   photo_URL: string;
 }
 
