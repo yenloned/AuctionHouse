@@ -1,5 +1,5 @@
 export type fetchAllItemsType = {
-    finalData: allItemsType[]
+    defaultSortedItems: allItemsType[]
 }
 
 export type allItemsType = {

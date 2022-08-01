@@ -53,13 +53,13 @@ const NavBar: React.FC<userDataForNavbar | any> = (props: userDataForNavbar | an
         <Link href="/"><div className="text-xl text-center font-family_header1 cursor-pointer">Auction House</div></Link>
         <div className="flex text-base justify-center font-family_header1">
           <Link href="/">
-            <div className={current_route.pathname == "/" ? "text-blue-500 dark:text-sky-300 mx-8 cursor-pointer" : "mx-8 cursor-pointer"}>Home</div>
+            <div className={current_route.pathname == "/" ? "text-emerald-400 dark:text-sky-300 mx-8 cursor-pointer" : "mx-8 cursor-pointer"}>Home</div>
           </Link>
           <Link href="/market">
-            <div className={current_route.pathname == "/market" ? "text-blue-500 dark:text-sky-300 mx-8 cursor-pointer" : "mx-8 cursor-pointer"}>Market</div>
+            <div className={current_route.pathname == "/market" ? "text-emerald-400 dark:text-sky-300 mx-8 cursor-pointer" : "mx-8 cursor-pointer"}>Market</div>
           </Link>
           <Link href="/about">
-            <div className={current_route.pathname == "/about" ? "text-blue-500 dark:text-sky-300 mx-8 cursor-pointer" : "mx-8 cursor-pointer"}>About</div>
+            <div className={current_route.pathname == "/about" ? "text-emerald-400 dark:text-sky-300 mx-8 cursor-pointer" : "mx-8 cursor-pointer"}>About</div>
           </Link>
         </div>
         <div className="flex text-base justify-center font-family_header1">

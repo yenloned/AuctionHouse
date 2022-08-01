@@ -9,3 +9,23 @@
         @apply font-family_body2;
     }
 }
+
+@layer utilities {
+    .scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+  
+    .scrollbar::-webkit-scrollbar-track {
+      border-radius: 100vh;
+      background: hidden;
+    }
+  
+    .scrollbar::-webkit-scrollbar-thumb {
+      background: rgb(180, 180, 180);
+      border-radius: 100vh;
+    }
+  
+    .scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgb(0,0,0);
+    }
+  }

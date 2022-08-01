@@ -1,9 +1,35 @@
+import { allItemsType } from "../interface/itemsFetching";
+
 export const getCurrentFormattedTime = () => {
     return new Date();
 }
 
 export const getCurrentRawTime = () => {
     return new Date().getTime();
+}
+
+//For sorting in ServerSideProps
+export const convertRawTimeToFormat = (rawtime: number | string) => {
+    try{
+        if (typeof rawtime === "string"){
+            rawtime = parseInt(rawtime)
+        }
+        }catch(e){
+            return null
+    }
+    return new Date(rawtime).toString();
+}
+
+//For display in market items
+export const convertRawTimeToFormatV2 = (rawtime: number | string) =>{
+    try{
+        if (typeof rawtime === "string"){
+            rawtime = parseInt(rawtime)
+        }
+        }catch(e){
+            return null
+    }
+    return new Date(rawtime).toISOString().slice(0, 16).replace("T", " ")
 }
 
 //parameter will be recieved as Raw Format
@@ -113,19 +139,19 @@ export const initTimeDifference = (endtime: number) => {
     }
     if(endtime >= 2592000){
         const months = Math.floor(endtime / 2592000)
-        return `more than ${months} ${months===1 ? `month` : `months`}`
+        return `more than ${months===1 ? `a month` : `${months} months`}`
     }
     if(endtime >= 604800){
         const weeks = Math.floor(endtime / 604800)
-        return `more than ${weeks} ${weeks===1 ? `week` : `weeks`}`
+        return `more than ${weeks===1 ? `a week` : `${weeks} weeks`}`
     }
     if(endtime >= 86400){
         const days = Math.floor(endtime / 86400)
-        return `more than ${days} ${days===1 ? `week` : `weeks`}`
+        return `more than ${days===1 ? `a week` : `${days} weeks`}`
     }
     if(endtime >= 3600){
         const hours = Math.ceil(endtime / 3600)
-        return `less than ${hours} ${hours===1 ? `hour` : `hours`}`
+        return `less than ${hours===1 ? `a hour` : `${hours} hours`}`
     }
     if(endtime >= 60*15){
         return `less than a hour`
@@ -138,11 +164,19 @@ export const initTimeDifference = (endtime: number) => {
     }
     if(endtime > 60){
         const minutes = Math.ceil(endtime / 60)
-        return `less than ${minutes} ${minutes===1 ? `minute` : `minutes`}`
+        return `less than ${minutes===1 ? `a minute` : `${minutes} minutes`}`
     }
     return `less than a minute`
 }
 
 export const checkIfTimeOutdated = (timestamp: number) => {
     return new Date().getTime() > timestamp;
+}
+
+export const convertItemsTimestamp = (itemsList: allItemsType[]) => {
+    itemsList.map((eachItemList) => {
+        eachItemList.start_time = new Date(eachItemList.start_time).getTime().toString();
+        eachItemList.end_time = new Date(eachItemList.end_time).getTime().toString();
+    })
+    return itemsList
 }
