@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react"
-import { SearchIcon } from "@heroicons/react/solid"
+import { SearchIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/solid"
 import { io, Socket } from "socket.io-client"
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
-import { addAbortSignal } from "stream"
 import { allItemsType, fetchAllItemsType } from "../../interface/itemsFetching"
-import { convertItemsTimestamp, convertRawTimeToFormat, convertRawTimeToFormatV2, initTimeDifference, secondsDifference, timeDifference } from "../../functions/dateTime"
+import { checkIfTimeStillValid, convertItemsTimestamp, convertRawTimeToFormatV2, initTimeDifference, secondsDifference} from "../../functions/dateTime"
 import _ from "lodash"
 
 export async function getServerSideProps(){
@@ -52,6 +51,8 @@ export async function getServerSideProps(){
       const time_left = initTimeDifference(secondsDifference(currTime, endTime))
 
       return {...d, time_left}
+    }).filter((eachItem: allItemsType) =>{
+      return checkIfTimeStillValid(eachItem.end_time)
     })
 
     const timeConvertedItems = convertItemsTimestamp(finalData)
@@ -63,10 +64,14 @@ export async function getServerSideProps(){
   }
 }
 
-const Market = (props: fetchAllItemsType | null) => {
+const Market = (props: fetchAllItemsType) => {
   const [searchItem, setSearchItem] = useState("")
   const [isDefaultSorting, setIsDefaultSorting] = useState(true)
+  const [sortingChoice, setSortingChoice] = useState("")
   const [sortedItems, setSortedItems] = useState<allItemsType[]>()
+  const [currentPage, setCurrentPage] = useState(1)
+  const [minPageLimit, setMinPageLimit] = useState(1)
+  const [maxPageLimit, setMaxPageLimit] = useState(3)
 
   //socketio draft
   /*
@@ -94,6 +99,49 @@ const Market = (props: fetchAllItemsType | null) => {
     setTest2(message)
   }
   */
+
+  useEffect(() => {
+    if(props.defaultSortedItems.length > 2){
+      setMaxPageLimit(3)
+    }else{
+      setMaxPageLimit(props.defaultSortedItems.length)
+    }
+  }, [])
+
+  let pages: number[] = [];
+  for (let i=minPageLimit; i<=maxPageLimit; i++){
+    pages.push(i)
+  }
+
+  const totalMaxPages = Math.ceil(props.defaultSortedItems.length / 4)
+
+  const switchPage = (e: any) => {
+    setCurrentPage(Number(e.target.id))
+    if(Number(e.target.id) > maxPageLimit){
+      setMinPageLimit(Math.ceil(Number(e.target.id)/3))
+      setMaxPageLimit(Math.ceil(Number(e.target.id)/3) + 3)
+    }
+  }
+
+  const nextPage = (e: number) => {
+    setCurrentPage(currentPage + 1)
+    if(currentPage+1 > maxPageLimit){
+      setMinPageLimit(Math.floor(Number(e)/3)*3 + 1)
+      if( (Math.floor(Number(e)/3)*3 + 3) < totalMaxPages ){
+        setMaxPageLimit(Math.floor(Number(e)/3)*3 + 3)
+      }else{
+        setMaxPageLimit(totalMaxPages)
+      }
+    }
+  }
+
+  const prevPage = (e: number) => {
+    setCurrentPage(currentPage - 1)
+    if(currentPage-1 < minPageLimit){
+      setMinPageLimit(Math.floor(Number(e)/3)*3 - 2)
+      setMaxPageLimit(e - 1)
+    }
+  }
 
   const switching = () => {
     console.log("switched")
@@ -125,7 +173,7 @@ const Market = (props: fetchAllItemsType | null) => {
         hello
       </div>
       <div className="flex mx-[8vw] justify-between">
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center font-family_header3 text-lg">
           <div className="cursor-pointer p-1 px-4"> Latest </div>
           <div className="cursor-pointer p-1 px-4"> Lowest Price </div>
           <div className="cursor-pointer p-1 px-4" onClick={switching}> Highest Price </div>
@@ -143,7 +191,7 @@ const Market = (props: fetchAllItemsType | null) => {
       </div>
       <div className="flex flex-col mx-[8vw] gap-20">
         {isDefaultSorting ?
-        props?.defaultSortedItems.map((eachItems) => {
+        props?.defaultSortedItems.slice(4*currentPage-4,4*currentPage).map((eachItems) => {
           return (
           <div key={eachItems._id} className="flex py-6 px-12 bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg border-x-2
           dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">
@@ -161,9 +209,10 @@ const Market = (props: fetchAllItemsType | null) => {
                 <div className="">Current Price: {eachItems.current_price ? eachItems.start_price :eachItems.start_price}</div>
               </div>
               <div className="flex mt-1 justify-around text-lg font-family_body2">
+                {eachItems._id}
                 <div className="">Top Bidder: {eachItems.bidder_data ? `${eachItems.bidder_data.firstname} ${eachItems.bidder_data.lastname}` : "--"}</div>
                 <div className="flex">
-                  Time Left: <div className={eachItems.time_left === "less than a minute" ? "text-red-600" : ""}>{eachItems.time_left}
+                  Time Left: <div className={eachItems.time_left === "less than a minute" ? "text-red-600" : "text-blue-600 dark:text-cyan-300"}>{eachItems.time_left}
                   </div>
                 </div>
               </div>
@@ -178,7 +227,17 @@ const Market = (props: fetchAllItemsType | null) => {
         ""
         }
       </div>
-      <button onClick={() => {console.log(props)}}>check props</button><br/>
+      <div className="flex justify-center gap-1 text-lg mt-5">
+        <ChevronLeftIcon className="cursor-pointer w-6 h-8" onClick={currentPage === 1 ? () => {} : () => prevPage(currentPage)} />
+        {pages.map((eachPage)=>{
+          return (
+            <div key={eachPage} id={eachPage.toString()} onClick={(e) => switchPage(e)}
+            className={currentPage === eachPage ? "cursor-pointer text-sky-600 dark:text-sky-400 border-blue-400 border-2 px-2" : "cursor-pointer px-2 border-2"}>{eachPage}</div>
+          )
+        })}
+        <ChevronRightIcon className="cursor-pointer w-6 h-8" onClick={currentPage === totalMaxPages ? () => {} : () => nextPage(currentPage)} />
+      </div>
+      <button onClick={() => {console.log(props?.defaultSortedItems)}}>check props</button><br/>
       <button onClick={() => {console.log(sortedItems)}}>check sortedProps</button>
 
     </div>

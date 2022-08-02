@@ -169,8 +169,11 @@ export const initTimeDifference = (endtime: number) => {
     return `less than a minute`
 }
 
-export const checkIfTimeOutdated = (timestamp: number) => {
-    return new Date().getTime() > timestamp;
+export const checkIfTimeStillValid = (timestamp: number | string) => {
+    if(typeof timestamp === "string"){
+        timestamp = new Date(timestamp).getTime()
+    }
+    return timestamp > new Date().getTime();
 }
 
 export const convertItemsTimestamp = (itemsList: allItemsType[]) => {
