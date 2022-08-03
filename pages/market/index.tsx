@@ -5,6 +5,7 @@ import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
 import { allItemsType, fetchAllItemsType } from "../../interface/itemsFetching"
 import { checkIfTimeStillValid, convertItemsTimestamp, convertRawTimeToFormatV2, initTimeDifference, secondsDifference} from "../../functions/dateTime"
 import _ from "lodash"
+import { activityChoice_active, activityChoice_inactive, sortingChoices_active, sortingChoices_inactive } from "../../styles/classNames"
 
 export async function getServerSideProps(){
   const client = new ApolloClient({
@@ -68,7 +69,8 @@ const Market = (props: fetchAllItemsType) => {
   const [searchItem, setSearchItem] = useState("")
   const [isDefaultSorting, setIsDefaultSorting] = useState(true)
   const [sortingChoice, setSortingChoice] = useState("")
-  const [sortedItems, setSortedItems] = useState<allItemsType[]>()
+  const [sortedItems, setSortedItems] = useState<allItemsType[]>([])
+  const [activityChoice, setActivityChoice] = useState("recent activity")
   const [currentPage, setCurrentPage] = useState(1)
   const [minPageLimit, setMinPageLimit] = useState(1)
   const [maxPageLimit, setMaxPageLimit] = useState(3)
@@ -101,10 +103,10 @@ const Market = (props: fetchAllItemsType) => {
   */
 
   useEffect(() => {
-    if(props.defaultSortedItems.length > 2){
+    if(props.defaultSortedItems.length > 2*4){
       setMaxPageLimit(3)
     }else{
-      setMaxPageLimit(props.defaultSortedItems.length)
+      setMaxPageLimit(Math.ceil(props.defaultSortedItems.length / 4))
     }
   }, [])
 
@@ -143,9 +145,43 @@ const Market = (props: fetchAllItemsType) => {
     }
   }
 
-  const switching = () => {
-    console.log("switched")
-    setSortedItems(_.orderBy(props?.defaultSortedItems, "start_price", "asc"))
+  const switchActivityChoice = (choice: string) => {
+    switch(choice){
+      case "recent activity":
+        setActivityChoice("recent activity")
+        break;
+      case "my activity":
+        setActivityChoice("my activity")
+        break;
+      default:
+        console.log("switch error (activity)")
+        break;
+    }
+  }
+
+  const switchSortingChoice = (choice: string) => {
+    setIsDefaultSorting(false)
+    switch(choice){
+      case "latest":
+        setSortingChoice("")
+        setIsDefaultSorting(true)
+        break;
+      case "highest price":
+        setSortingChoice("highest price")
+        setSortedItems(_.orderBy(props?.defaultSortedItems, "current_price", "desc"))
+        break;
+      case "lowest price":
+        setSortingChoice("lowest price")
+        setSortedItems(_.orderBy(props?.defaultSortedItems, "current_price", "asc"))
+        break;
+      case "ending soon":
+        setSortingChoice("ending soon")
+        setSortedItems(_.orderBy(props?.defaultSortedItems, "end_time", "asc"))
+        break;
+      default:
+        console.log("switch error (sorting)")
+        break;
+    }
   }
 
   const redirectToItemPage = (id: string) => {
@@ -156,33 +192,27 @@ const Market = (props: fetchAllItemsType) => {
     <div className="bg-neutral-50 dark:bg-gray-900 h-auto my-auto pt-10">
       <div className="flex justify-between mx-[8vw]">
         <div className="flex gap-3">
-          <div className="cursor-pointer p-1 px-4 font-family_header2 bg-gradient-to-t from-neutral-200 via-slate-50 to-neutral-100 border-x-2 border-t-2
-          dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">Recent Activity</div>
-          <div className="cursor-pointer p-1 px-4 font-family_header2 bg-gradient-to-t from-neutral-200 via-slate-50 to-neutral-100 border-x-2 border-t-2
-          dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">My Activity</div>
+          <div className={activityChoice === "recent activity" ? activityChoice_active : activityChoice_inactive} onClick={() => switchActivityChoice("recent activity")}>Recent Activity</div>
+          <div className={activityChoice === "my activity" ? activityChoice_active : activityChoice_inactive} onClick={() => switchActivityChoice("my activity")}>My Activity</div>
         </div>
         <div className="cursor-pointer p-1 px-4 font-family_header2 rounded-lg bg-gradient-to-t from-green-400 via-emerald-200 to-teal-300
         dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500">Create a Bidding Item</div>
       </div>
-      <div className="mx-[8vw] h-[160px] mb-5 bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg px-10 border-x-2
+      <div className="mx-[8vw] h-[160px] mb-5 bg-gradient-to-t from-neutral-200 via-slate-50 to-neutral-100 shadow-lg px-10 border-x-2
       dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">
-        hello<br/>
-        hello<br/>
-        hello<br/>
-        hello<br/>
-        hello
+
       </div>
-      <div className="flex mx-[8vw] justify-between">
-        <div className="flex gap-2 items-center font-family_header3 text-lg">
-          <div className="cursor-pointer p-1 px-4"> Latest </div>
-          <div className="cursor-pointer p-1 px-4"> Lowest Price </div>
-          <div className="cursor-pointer p-1 px-4" onClick={switching}> Highest Price </div>
-          <div className="cursor-pointer p-1 px-4"> Ending Soon </div>
+      <div className="flex mx-[8vw] justify-between mb-2">
+        <div className="flex gap-2 items-end font-family_header3 text-lg">
+          <div className={isDefaultSorting ? sortingChoices_active : sortingChoices_inactive} onClick={() => switchSortingChoice("latest")}> Latest </div>
+          <div className={sortingChoice === "lowest price" ? sortingChoices_active : sortingChoices_inactive} onClick={() => switchSortingChoice("lowest price")}> Lowest Price </div>
+          <div className={sortingChoice === "highest price" ? sortingChoices_active : sortingChoices_inactive} onClick={() => switchSortingChoice("highest price")}> Highest Price </div>
+          <div className={sortingChoice === "ending soon" ? sortingChoices_active : sortingChoices_inactive} onClick={() => switchSortingChoice("ending soon")}> Ending Soon </div>
         </div>
         <form className="text-center">
-          <div className="flex items-center text-center bg-zinc-200 rounded-md 
+          <div className="flex items-center text-center bg-zinc-200 rounded-md
           dark:bg-zinc-700 text-lg">
-            <input type="text" className="w-full my-1 mx-3 focus:outline-none bg-zinc-200 h-8 p-1
+            <input type="text" className="w-full my-1 mx-5 focus:outline-none bg-zinc-200 h-7 p-1
             dark:bg-zinc-700" onChange={(e) => setSearchItem(e.target.value)}
             placeholder="Search for items"/>
             <SearchIcon className="w-6 h-6 mx-4 cursor-pointer" onClick={() => console.log(searchItem)}/>
@@ -224,8 +254,39 @@ const Market = (props: fetchAllItemsType) => {
           )
         })
         :
-        ""
-        }
+        sortedItems.slice(4*currentPage-4,4*currentPage).map((eachItems) => {
+          return (
+          <div key={eachItems._id} className="flex py-6 px-12 bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg border-x-2
+          dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">
+            <img src={eachItems.photo_URL} className="w-[200px] h-[220px]" />
+            <div className="flex flex-col mx-[6vw] grow">
+              <div className="font-family_header3 font-semibold text-xl">{eachItems.name}</div>
+              <div className="font-family_header2 text-[1.1rem]">
+                <div className="flex gap-1">Created at <div className="text-emerald-400 dark:text-sky-400">{convertRawTimeToFormatV2(eachItems.start_time)} (HKT)</div> By <div>{eachItems.owner_data.firstname} {eachItems.owner_data.lastname}</div>
+                </div>
+              </div>
+              <div className="scrollbar pr-2 my-2 text-base font-family_body h-[75px] overflow-y-scroll text-justify snap-none">{eachItems.description}</div>
+              <div className="flex mt-1 justify-around text-lg font-family_body2">
+                <div className="">Start Price: {eachItems.start_price}</div>
+                <div className="">Per Price: {eachItems.per_price}</div>
+                <div className="">Current Price: {eachItems.current_price ? eachItems.start_price :eachItems.start_price}</div>
+              </div>
+              <div className="flex mt-1 justify-around text-lg font-family_body2">
+                {eachItems._id}
+                <div className="">Top Bidder: {eachItems.bidder_data ? `${eachItems.bidder_data.firstname} ${eachItems.bidder_data.lastname}` : "--"}</div>
+                <div className="flex">
+                  Time Left: <div className={eachItems.time_left === "less than a minute" ? "text-red-600" : "text-blue-600 dark:text-cyan-300"}>{eachItems.time_left}
+                  </div>
+                </div>
+              </div>
+              <div className="text-center mt-2">
+                <button className="text-center px-2 rounded-md font-family_header3 text-lg bg-gradient-to-t from-green-400 via-emerald-200 to-teal-300 dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500" onClick={() => redirectToItemPage(eachItems._id)}>Bid / See More Detail</button>
+              </div>
+            </div>
+          </div>
+          )
+        })
+      }
       </div>
       <div className="flex justify-center gap-1 text-lg mt-5">
         <ChevronLeftIcon className="cursor-pointer w-6 h-8" onClick={currentPage === 1 ? () => {} : () => prevPage(currentPage)} />

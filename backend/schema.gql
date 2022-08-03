@@ -39,6 +39,17 @@ type LoginResponse {
   user: CreateUserDto!
 }
 
+type CreateActivityDto {
+  _id: ID!
+  action: String!
+  timestamp: String!
+  user_id: String!
+  user_data: CreateUserDto
+  item_id: String!
+  item_data: CreateItemDto
+  bid_price: Int!
+}
+
 type Query {
   hello: String!
   users: [CreateUserDto!]!
@@ -49,6 +60,8 @@ type Query {
   findAll_items: [CreateItemDto!]!
   find_item(id: String!): CreateItemDto!
   hello_auth: String!
+  helloActivity: String!
+  findAll_Activity: [CreateActivityDto!]!
 }
 
 type Mutation {
@@ -58,6 +71,7 @@ type Mutation {
   loginUser(input: LoginInput!): LoginResponse!
   createGuestUser: String!
   loginGuestUser(input: String!): LoginResponse!
+  create_Activity(input: ActivityInput!): CreateActivityDto!
 }
 
 input UserInput {
@@ -104,4 +118,12 @@ input RegisterInput {
 input LoginInput {
   email: String!
   password: String!
+}
+
+input ActivityInput {
+  user_id: String!
+  item_id: String!
+  timestamp: Timestamp!
+  action: String!
+  bid_price: Int
 }

@@ -12,6 +12,7 @@ import { CloudModule } from './cloud/cloud.module';
 import { MarketModule } from './market/market.module';
 import { ScheduleModule } from "@nestjs/schedule"
 import { TasksModule } from './tasks/tasks.module';
+import { ActivityModule } from './activity/activity.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { TasksModule } from './tasks/tasks.module';
     AuthModule,
     CloudModule,
     MarketModule,
-    TasksModule
+    TasksModule,
+    ActivityModule,
   ],
   controllers: [AppController],
   providers: [AppService],
