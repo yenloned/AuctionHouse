@@ -1,4 +1,4 @@
-import { allItemsType } from "../interface/itemsFetching";
+import { allActivitiesType, allItemsType } from "../interface/marketFetching";
 
 export const getCurrentFormattedTime = () => {
     return new Date();
@@ -29,6 +29,11 @@ export const convertRawTimeToFormatV2 = (rawtime: number | string) =>{
         }catch(e){
             return null
     }
+    return new Date(rawtime).toISOString().slice(0, 16).replace("T", " ")
+}
+
+//For display in My Activity
+export const convertRawTimeToFormatV3 = (rawtime: string) =>{
     return new Date(rawtime).toISOString().slice(0, 16).replace("T", " ")
 }
 
@@ -182,4 +187,12 @@ export const convertItemsTimestamp = (itemsList: allItemsType[]) => {
         eachItemList.end_time = new Date(eachItemList.end_time).getTime().toString();
     })
     return itemsList
+}
+
+export const convertActivityTimestamp = (activityList: allActivitiesType[]) => {
+    const convertedList = activityList.map((eachActivityList) => {
+        const sortedTimestamp = new Date(eachActivityList.timestamp).getTime();
+        return {...eachActivityList, sortedTimestamp}
+    })
+    return convertedList
 }

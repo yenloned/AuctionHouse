@@ -21,6 +21,11 @@ export class ActivityResolver {
     }
 
     @Query(() => [CreateActivityDto])
+    async findUser_Activity(@Args('id') userid: string){
+        return this.activityService.find_activity(userid)
+    }
+
+    @Query(() => [CreateActivityDto])
     async findAll_Activity(){
         return this.activityService.findAll_activity()
     }

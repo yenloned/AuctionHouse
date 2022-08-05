@@ -8,8 +8,10 @@ export class ActivityInput{
     readonly item_id: string;
     @Field(() => GraphQLTimestamp)
     readonly timestamp: string
+    @Field(() => Int, {nullable: true})
+    readonly sortedTimestamp: number;
     @Field()
-    readonly action: string;
+    readonly action: string;    //created / bidded / won
     @Field(() => Int, {nullable: true})
     readonly bid_price?: number
 }

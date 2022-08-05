@@ -9,7 +9,9 @@ export class CreateActivityDto {
   @Field()
   readonly action: string;
   @Field()
-  readonly timestamp: string;
+  timestamp: string;
+  @Field(() => Int, {nullable: true})
+  sortedTimestamp: number;
   //user ID for resolveField
   @Field()
   readonly user_id: string;
@@ -22,6 +24,6 @@ export class CreateActivityDto {
   //item data from resolveField
   @Field(() => CreateItemDto, {nullable: true})
   readonly item_data?: CreateItemDto;
-  @Field(() => Int)
-  readonly bid_price: number;
+  @Field(() => Int, {nullable: true})
+  readonly bid_price?: number;
 }

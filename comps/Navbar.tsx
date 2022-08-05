@@ -43,6 +43,7 @@ const NavBar: React.FC<userDataForNavbar | any> = (props: userDataForNavbar | an
   }
 
   const logout = () => {
+    loginStatus?.setIsLoggedIn(false)
     localStorage.removeItem("jwt_token");
     window.location.reload();
   }

@@ -1,11 +1,15 @@
-import { useEffect, useState } from "react"
-import { SearchIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/solid"
+import { useContext, useEffect, useState } from "react"
+import { SearchIcon, ChevronLeftIcon, ChevronRightIcon, LockClosedIcon, ClockIcon } from "@heroicons/react/solid"
 import { io, Socket } from "socket.io-client"
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
-import { allItemsType, fetchAllItemsType } from "../../interface/itemsFetching"
-import { checkIfTimeStillValid, convertItemsTimestamp, convertRawTimeToFormatV2, initTimeDifference, secondsDifference} from "../../functions/dateTime"
+import { allActivitiesType, allItemsType, fetchAllActivitiesType, fetchAllItemsType } from "../../interface/marketFetching"
+import { checkIfTimeStillValid, convertActivityTimestamp, convertItemsTimestamp, convertRawTimeToFormatV2, convertRawTimeToFormatV3, initTimeDifference, secondsDifference} from "../../functions/dateTime"
 import _ from "lodash"
 import { activityChoice_active, activityChoice_inactive, sortingChoices_active, sortingChoices_inactive } from "../../styles/classNames"
+import LoadingSpinner from "../../comps/LoadingSpinner"
+import LoginStatusContext from "../../context/userLogin"
+import { checkIfJWTexpired, getUserIdFromJWT } from "../../functions/checkJWT"
+import { getUserActivity } from "../../functions/api/getUserActivity"
 
 export async function getServerSideProps(){
   const client = new ApolloClient({
@@ -66,6 +70,8 @@ export async function getServerSideProps(){
 }
 
 const Market = (props: fetchAllItemsType) => {
+  const loginStatus = useContext(LoginStatusContext)
+  const [userID, setUserID] = useState("")
   const [searchItem, setSearchItem] = useState("")
   const [isDefaultSorting, setIsDefaultSorting] = useState(true)
   const [sortingChoice, setSortingChoice] = useState("")
@@ -74,6 +80,8 @@ const Market = (props: fetchAllItemsType) => {
   const [currentPage, setCurrentPage] = useState(1)
   const [minPageLimit, setMinPageLimit] = useState(1)
   const [maxPageLimit, setMaxPageLimit] = useState(3)
+
+  const [userActivity, setUserActivity] = useState<allActivitiesType[]>([])
 
   //socketio draft
   /*
@@ -107,6 +115,21 @@ const Market = (props: fetchAllItemsType) => {
       setMaxPageLimit(3)
     }else{
       setMaxPageLimit(Math.ceil(props.defaultSortedItems.length / 4))
+    }
+
+    const jwt_token = typeof window !== 'undefined' ? localStorage.getItem('jwt_token') : null
+    if(!checkIfJWTexpired(jwt_token) && jwt_token){
+      const decodedUserID = getUserIdFromJWT(jwt_token)
+      if(decodedUserID){
+        setUserID(decodedUserID)
+        getUserActivity(decodedUserID).then((data) =>{
+          const {findUser_Activity} = data
+
+          const timeConvertedActivities = convertActivityTimestamp(findUser_Activity)
+          const defaultSortedActivites = _.orderBy(timeConvertedActivities, "sortedTimestamp", "desc")
+          setUserActivity(defaultSortedActivites)
+        })
+      }
     }
   }, [])
 
@@ -152,6 +175,12 @@ const Market = (props: fetchAllItemsType) => {
         break;
       case "my activity":
         setActivityChoice("my activity")
+        if(userID){
+          getUserActivity(userID).then((data) =>{
+            const {findUser_Activity} = data
+            setUserActivity(findUser_Activity)
+          })
+        }
         break;
       default:
         console.log("switch error (activity)")
@@ -198,13 +227,48 @@ const Market = (props: fetchAllItemsType) => {
         <div className="cursor-pointer p-1 px-4 font-family_header2 rounded-lg bg-gradient-to-t from-green-400 via-emerald-200 to-teal-300
         dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500">Create a Bidding Item</div>
       </div>
-      <div className="mx-[8vw] h-[160px] mb-5 bg-gradient-to-t from-neutral-200 via-slate-50 to-neutral-100 shadow-lg px-10 border-x-2
+      <div className="mx-[8vw] h-[180px] mb-5 bg-gradient-to-t from-neutral-200 via-slate-50 to-neutral-100 shadow-lg px-10 border-x-2 py-4 overflow-y-scroll scrollbar
       dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">
-
+        { 
+          activityChoice === "my activity" && userActivity[0] ?
+          <div className="flex flex-col gap-2">
+          {
+            userActivity.map((eachActivity) => {
+              return(
+                <div key={eachActivity._id} className="flex items-end gap-2">
+                  <div className="font-family_body4 text-[1.1rem]">{convertRawTimeToFormatV3(eachActivity.timestamp)} (HKT)</div>
+                  <img src={eachActivity.user_data.iconURL} className="w-[50px] h-[46px] border-2"/>
+                  <div className="items-end text-[1.05rem]">{eachActivity.user_data.firstname} {eachActivity.user_data.lastname} {eachActivity.action}</div>
+                  <img src={eachActivity.item_data.photo_URL} className="w-[50px] h-[46px] border-2" />
+                  <div className="cursor-pointer text-[1.05rem] underline hover:text-emerald-500 dark:hover:text-sky-400" onClick={() => window.location.replace(`market/${eachActivity.item_data._id}`)}>{eachActivity.item_data.name}</div>
+                  {
+                    eachActivity.action === "bidded" || eachActivity.action === "won" ?
+                    <div>by $ {eachActivity.bid_price}</div>  : ""
+                  }
+                </div>
+              )
+            })
+          }
+          </div>
+          :
+          activityChoice === "my activity" && userID ?
+          <div className="flex flex-col text-center font-family_body1 items-center">
+            <ClockIcon className="w-[50px] h-[50px] mt-2"/>
+            <div className="mt-2 text-lg">You have no activies so far.</div>
+          </div> 
+          :
+          activityChoice === "my activity" && !loginStatus?.isLoggedIn ?
+          <div className="flex flex-col text-center font-family_body1 items-center">
+            <LockClosedIcon className="w-[50px] h-[50px] mt-2"/>
+            <div className="mt-2 text-lg">You have to login in order to check your activity.</div>
+          </div>
+          :
+          ""
+        }
       </div>
       <div className="flex mx-[8vw] justify-between mb-2">
         <div className="flex gap-2 items-end font-family_header3 text-lg">
-          <div className={isDefaultSorting ? sortingChoices_active : sortingChoices_inactive} onClick={() => switchSortingChoice("latest")}> Latest </div>
+          <div className={isDefaultSorting ? "cursor-pointer p-1 px-4 bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-100 border-2 border-neutral-300 dark:bg-gradient-to-t dark:from-neutral-800 dark:via-gray-800 dark:to-neutral-800 dark:border-neutral-400" : sortingChoices_inactive} onClick={() => switchSortingChoice("latest")}> Latest </div>
           <div className={sortingChoice === "lowest price" ? sortingChoices_active : sortingChoices_inactive} onClick={() => switchSortingChoice("lowest price")}> Lowest Price </div>
           <div className={sortingChoice === "highest price" ? sortingChoices_active : sortingChoices_inactive} onClick={() => switchSortingChoice("highest price")}> Highest Price </div>
           <div className={sortingChoice === "ending soon" ? sortingChoices_active : sortingChoices_inactive} onClick={() => switchSortingChoice("ending soon")}> Ending Soon </div>

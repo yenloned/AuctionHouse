@@ -11,6 +11,7 @@ module.exports = {
       family_body1:["'Rubik'", 'sans-serif'], //thick
       family_body2:["'Barlow'", 'sans-serif'], //thin
       family_body3:["'Manrope'", 'sans-serif'], //thicker
+      family_body4:["'Roboto Condensed'", 'sans-serif'],
     },
   },
   variants: {

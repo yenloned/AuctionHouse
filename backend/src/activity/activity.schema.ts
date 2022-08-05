@@ -12,6 +12,8 @@ export class Activity {
   @Prop()
   timestamp: string
   @Prop()
+  sortedTimestamp?: number
+  @Prop()
   action: string
   @Prop()
   bid_price?: number

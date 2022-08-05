@@ -2,6 +2,7 @@ import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
 import { useState } from "react"
 import useSWR from "swr"
 import { UploadIcon } from "@heroicons/react/solid"
+import LoadingSpinner from "../../comps/LoadingSpinner"
 
 const fetcher = async () =>{
     const jwt_token = typeof window !== 'undefined' ? localStorage.getItem('jwt_token') : null
@@ -100,7 +101,7 @@ const userPage = () => {
     //check JWT and return the profile data (if valid)
     const {data, error} = useSWR('profile', fetcher);
     if (error) window.location.replace('/account/login')
-    if (!data) return "Data loading..."
+    if (!data) return LoadingSpinner()
     const { find_profile } = data;
 
     return(

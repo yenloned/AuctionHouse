@@ -32,14 +32,11 @@ export const checkIfJWTexpired = (token: string | null) => {
 
 }
 
-export const getUserIdFromJWT = (token: string | null) => {
-    if (!token || token === "" || token === undefined){
-        return false
-    }
+export const getUserIdFromJWT = (token: string) => {
     try{
         const decoded: decodedJWTType = decodeJWT(token);
         return decoded.sub
     }catch(e){
-        return false;
+        return "";
     }
 }

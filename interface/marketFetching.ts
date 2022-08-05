@@ -18,6 +18,32 @@ export type allItemsType = {
     photo_URL: string
 }
 
+export type fetchAllActivitiesType = {
+    findUser_Activity: allActivitiesType[]
+}
+
+export type allActivitiesType = {
+    _id: string,
+    user_data: marketUserFormType,
+    item_data: marketItemFormType,
+    bid_price: number | null,
+    timestamp: string,
+    sortedTimestamp: number | null,
+    action: string
+}
+
+export type marketUserFormType = {
+    firstname: string,
+    lastname: string,
+    iconURL: string
+}
+
+export type marketItemFormType = {
+    _id: string,
+    name: string,
+    photo_URL: string
+}
+
 export type userFromItemType = {
     _id: string,
     firstname: string,
