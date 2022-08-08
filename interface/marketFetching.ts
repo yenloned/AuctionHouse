@@ -2,6 +2,10 @@ export type fetchAllItemsType = {
     defaultSortedItems: allItemsType[]
 }
 
+export type fetchOneItemType = {
+    finalData: allItemsType
+}
+
 export type allItemsType = {
     _id: string,
     name: string,

@@ -63,17 +63,17 @@ export const timeDifference = (seconds: number) => {
         const days = Math.floor(daysInMonths / 86400)
     
         if(monthsInSeconds && daysInMonths){
-            return `${years} yr ${months} mth ${days} d`
+            return `${years} ${years === 1 ? "year" : "years"} ${months} ${months === 1 ? "month" : "months"} ${days} ${days === 1 ? "day" : "days"}`
         }
         if(monthsInSeconds){
-            return `${years} yr ${months} mth`
+            return `${years} ${years === 1 ? "year" : "years"} ${months} ${months === 1 ? "month" : "months"}`
         }
 
         if(daysInMonths){
-            return `${years} yr ${days} d`
+            return `${years} ${years === 1 ? "year" : "years"} ${days} ${days === 1 ? "day" : "days"}`
         }
 
-        return `${years} years`
+        return `${years} ${years === 1 ? "year" : "years"}`
     }
     //Month
     if (seconds >= 2592000){
@@ -83,9 +83,9 @@ export const timeDifference = (seconds: number) => {
         const days = Math.floor(daysInMonths / 86400)
 
         if(daysInMonths){
-            return `${months} mth ${days} d`
+            return `${months} ${months === 1 ? "month" : "months"} ${days} ${days === 1 ? "day" : "days"}`
         }
-        return `${months} months`
+        return `${months} ${months === 1 ? "month" : "months"}`
     }
     //Days
     if (seconds >= 86400){
@@ -96,16 +96,16 @@ export const timeDifference = (seconds: number) => {
         const minutes = Math.floor(minutesInDays / 60)
 
         if(hoursInDays && minutesInDays){
-            return `${days} days ${hours} hrs ${minutes} mins`
+            return `${days} ${days === 1 ? "day" : "days"} ${hours} ${hours === 1 ? "hours" : "hour"} ${minutes} ${minutes === 1 ? "minute" : "minutes"}`
         }
         if(hoursInDays){
-            return `${days} days ${hours} hrs`
+            return `${days} ${days === 1 ? "day" : "days"} ${hours === 1 ? "hours" : "hour"}`
         }
         if(minutesInDays){
-            return `${days} days ${minutes} mins`
+            return `${days} ${days === 1 ? "day" : "days"} ${minutes} ${minutes === 1 ? "minute" : "minutes"}`
         }
 
-        return `${days} days`
+        return `${days} ${days === 1 ? "day" : "days"}`
     }
     //Hours
     if (seconds >= 3600){
@@ -115,27 +115,27 @@ export const timeDifference = (seconds: number) => {
         const minutes = Math.floor(minutesInHours / 60)
 
         if(minutesInHours && secondsInMinutes){
-            return `${hours} hrs ${minutes} mins ${secondsInMinutes} s`
+            return `${hours} ${hours === 1 ? "hour" : "hours"} ${minutes} ${minutes === 1 ? "minute" : "minutes"} ${secondsInMinutes} ${secondsInMinutes === 1 ? "second" : "seconds"}`
         }
         if(minutesInHours){
-            return `${hours} hrs ${minutes} mins`
+            return `${hours} ${hours === 1 ? "hours" : "hour"} ${minutes} ${minutes === 1 ? "minute" : "minutes"}`
         }
         if(secondsInMinutes){
-            return `${hours} hrs ${secondsInMinutes} s`
+            return `${hours} ${hours === 1 ? "hours" : "hour"} ${secondsInMinutes} ${secondsInMinutes === 1 ? "second" : "seconds"}`
         }
-        return `${hours} hrs`
+        return `${hours} ${hours === 1 ? "hours" : "hour"}`
     }
     //Minutes
     if (seconds >= 60){
         const secondsInMinutes = seconds % 60
         const minutes = Math.floor( seconds / 60)
         if(secondsInMinutes){
-            return `${minutes} mins ${secondsInMinutes} s`
+            return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ${secondsInMinutes} ${secondsInMinutes === 1 ? "second" : "seconds"}`
         }
-        return `${minutes} mins`
+        return `${minutes} ${minutes === 1 ? "minute" : "minutes"}`
     }
     //Seconds
-    return `${seconds} s`
+    return `${seconds} seconds`
 }
 
 export const initTimeDifference = (endtime: number) => {
@@ -179,6 +179,12 @@ export const checkIfTimeStillValid = (timestamp: number | string) => {
         timestamp = new Date(timestamp).getTime()
     }
     return timestamp > new Date().getTime();
+}
+
+export const convertItemTimestamp = (itemData: allItemsType) => {
+    const start_time = new Date(`${itemData.start_time}`).getTime().toString()
+    const end_time = new Date(`${itemData.end_time}`).getTime().toString()
+    return {...itemData, start_time, end_time}
 }
 
 export const convertItemsTimestamp = (itemsList: allItemsType[]) => {

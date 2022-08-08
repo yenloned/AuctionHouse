@@ -299,11 +299,10 @@ const Market = (props: fetchAllItemsType) => {
               <div className="scrollbar pr-2 my-2 text-base font-family_body h-[75px] overflow-y-scroll text-justify snap-none">{eachItems.description}</div>
               <div className="flex mt-1 justify-around text-lg font-family_body2">
                 <div className="">Start Price: {eachItems.start_price}</div>
-                <div className="">Per Price: {eachItems.per_price}</div>
+                <div className="">Bid Increment: {eachItems.per_price}</div>
                 <div className="">Current Price: {eachItems.current_price ? eachItems.start_price :eachItems.start_price}</div>
               </div>
               <div className="flex mt-1 justify-around text-lg font-family_body2">
-                {eachItems._id}
                 <div className="">Top Bidder: {eachItems.bidder_data ? `${eachItems.bidder_data.firstname} ${eachItems.bidder_data.lastname}` : "--"}</div>
                 <div className="flex">
                   Time Left: <div className={eachItems.time_left === "less than a minute" ? "text-red-600" : "text-blue-600 dark:text-cyan-300"}>{eachItems.time_left}

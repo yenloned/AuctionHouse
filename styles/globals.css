@@ -15,21 +15,30 @@
 }
 
 @layer utilities {
-    .scrollbar::-webkit-scrollbar {
-      width: 6px;
-    }
-  
-    .scrollbar::-webkit-scrollbar-track {
-      border-radius: 100vh;
-      background: hidden;
-    }
-  
-    .scrollbar::-webkit-scrollbar-thumb {
-      background: rgb(180, 180, 180);
-      border-radius: 100vh;
-    }
-  
-    .scrollbar::-webkit-scrollbar-thumb:hover {
-      background: rgb(0,0,0);
-    }
+  .scrollbar::-webkit-scrollbar {
+    width: 6px;
   }
+
+  .scrollbar::-webkit-scrollbar-track {
+    border-radius: 100vh;
+    background: hidden;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: rgb(180, 180, 180);
+    border-radius: 100vh;
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgb(0,0,0);
+  }
+
+  .input_hiddenarrow::-webkit-outer-spin-button, .input_hiddenarrow::-webkit-inner-spin-button{
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .input_hiddenarrow[type=number]{
+    -moz-appearance: textfield;
+  }
+}
