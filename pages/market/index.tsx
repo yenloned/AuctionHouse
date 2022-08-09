@@ -87,7 +87,7 @@ const Market = (props: fetchAllItemsType) => {
   /*
   const [test, setTest] = useState("aaaa")
   const [test2, setTest2] = useState("")
-  const socket = io("http://localhost:5001", {transports: ['websocket']})
+  const socket = io("http://localhost:6001", {transports: ['websocket']})
 
   const tdata = {message: "hello"}
   

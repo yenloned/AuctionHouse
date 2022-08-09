@@ -5,10 +5,40 @@ import { useEffect, useState } from "react"
 import { convertItemTimestamp, convertRawTimeToFormat, convertRawTimeToFormatV2, secondsDifference, timeDifference } from "../../functions/dateTime"
 import { formatMoney } from "../../functions/displayFormat"
 import LoadingSpinner from "../../comps/LoadingSpinner"
+import { io, Socket } from "socket.io-client"
+import { DefaultEventsMap } from "socket.io/dist/typed-events"
 
 const ItemInMarket = (props: fetchOneItemType) => {
     const [timeLeft, setTimeLeft] = useState(0)
     const [bidAmount, setBidAmount] = useState(props.finalData.current_price ? props.finalData.current_price + props.finalData.per_price : props.finalData.start_price + props.finalData.per_price)
+
+    //socketio
+    const [test, setTest] = useState("aaaa")
+    const [test2, setTest2] = useState("")
+    const [websocket, setWebsocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap>>()
+
+    useEffect(() => {
+        setWebsocket(io("http://localhost:6001", {transports: ["websocket"]}))
+    }, [])
+
+
+    const tdata = {message: test}
+    
+
+    const handlepost = () => {
+        console.log("clicked")
+        websocket?.emit('send-message', tdata)
+        receive_socket(websocket)
+    }
+
+    const receive_socket = async (socket: any) => {
+        socket.on('message', (message: any) =>{
+            console.log(socket.id)
+            console.log(message)
+            setTest2(message)
+
+        })
+    }
 
     useEffect(() => {
         const {end_time} = props.finalData
@@ -78,7 +108,7 @@ const ItemInMarket = (props: fetchOneItemType) => {
             <div className="text-center my-4">
                 <div className="font-family_header4 text-xl font-bold">Bidding Time Left</div>
                 <div className="font-family_body3 text-xl">
-                    <div className={timeDifference(timeLeft).match(/.*hour*/) ? "text-amber-400" : timeDifference(timeLeft).match(/.*(minute|second)*/) ? "text-red-600 dark:text-red-500" : "text-cyan-400"}>{timeDifference(timeLeft)}
+                    <div className={timeDifference(timeLeft).match(/.*hour*/) ? "text-amber-400" : timeDifference(timeLeft).match(/.*second*/) ? "text-red-600 dark:text-red-500" : "text-cyan-400"}>{timeDifference(timeLeft)}
                     </div>
                 </div>
             </div>
@@ -105,7 +135,10 @@ const ItemInMarket = (props: fetchOneItemType) => {
                 </div>
             </div>
             {timeDifference(timeLeft)}
-            <button onClick={() => console.log(props)}>aaa</button>
+            <button onClick={() => console.log(props)}>check props</button>
+            <div>{test2}</div>
+            <input onChange={(e) => {setTest(e.target.value)}}></input>
+            <button onClick={() => handlepost()}>test socket</button>
         </div>
     )
 }
