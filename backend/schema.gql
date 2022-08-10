@@ -34,6 +34,12 @@ type CreateItemDto {
   photo_URL: String!
 }
 
+type BidItemDto {
+  item_result: CreateItemDto
+  user_result: CreateUserDto
+  message: String
+}
+
 type LoginResponse {
   access_token: String!
   user: CreateUserDto!
@@ -56,7 +62,6 @@ type Query {
   users: [CreateUserDto!]!
   find_user(id: String!): CreateUserDto!
   find_profile(input: String!): CreateUserDto!
-  helloitems: String!
   items: [CreateItemDto!]!
   findAll_items: [CreateItemDto!]!
   find_item(id: String!): CreateItemDto!
@@ -69,6 +74,7 @@ type Query {
 type Mutation {
   createUser(input: UserInput!): CreateUserDto!
   createItem(input: ItemInput!): CreateItemDto!
+  bid_item(input: BidItemInput!): BidItemDto!
   registerUser(input: RegisterInput!): CreateUserDto!
   loginUser(input: LoginInput!): LoginResponse!
   createGuestUser: String!
@@ -108,6 +114,12 @@ input ItemInput {
 `Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
 """
 scalar Timestamp
+
+input BidItemInput {
+  item_id: String!
+  userID: String!
+  bid_price: Int!
+}
 
 input RegisterInput {
   firstname: String!

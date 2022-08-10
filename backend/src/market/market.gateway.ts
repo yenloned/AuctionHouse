@@ -1,7 +1,7 @@
 import { Logger } from "@nestjs/common";
-import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets"
-import { Server } from "socket.io"
-import { CreateMessageInput } from "./interfaces/createMessageDto";
+import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets"
+import { Server, Socket } from "socket.io"
+import { CreateMessageInput, JoinRoomInput } from "./interfaces/createMessageDto";
 import { MarketService } from "./market.service";
 @WebSocketGateway(6001, {
     transports: ['websocket'],
@@ -25,7 +25,10 @@ export class MarketGateway{
         this.server.emit('message', createMessageInput?.message);
     }
 
-    @SubscribeMessage('end')
-    async hanldeDisconnect(){
+    @SubscribeMessage('join-room')
+    async joinRoom(client: Socket, roomID: string){
+        client.join(roomID)
+        //this.server.to(roomID).emit('joined-room', `User have joined ${roomID}`)
+        Logger.log(`User has joined Room ${roomID}`)
     }
 }

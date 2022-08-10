@@ -7,10 +7,16 @@ import { formatMoney } from "../../functions/displayFormat"
 import LoadingSpinner from "../../comps/LoadingSpinner"
 import { io, Socket } from "socket.io-client"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
+import { bidItem } from "../../functions/api/bidItem"
+import { getUserIdFromJWT } from "../../functions/checkJWT"
 
 const ItemInMarket = (props: fetchOneItemType) => {
     const [timeLeft, setTimeLeft] = useState(0)
     const [bidAmount, setBidAmount] = useState(props.finalData.current_price ? props.finalData.current_price + props.finalData.per_price : props.finalData.start_price + props.finalData.per_price)
+    const [userID, setUserID] = useState("")
+    const [userToken, setUserToken] = useState<string|null>("")
+
+    const [bidErrorMsg, setBidErrorMsg] = useState("")
 
     //socketio
     const [test, setTest] = useState("aaaa")
@@ -18,12 +24,18 @@ const ItemInMarket = (props: fetchOneItemType) => {
     const [websocket, setWebsocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap>>()
 
     useEffect(() => {
-        setWebsocket(io("http://localhost:6001", {transports: ["websocket"]}))
+        //get userID
+        const jwt_token = typeof window !== 'undefined' ? localStorage.getItem('jwt_token') : null
+        setUserToken(jwt_token)
+        setUserID(getUserIdFromJWT(jwt_token))
+        //create websocket
+        const client = io("http://localhost:6001", {transports: ["websocket"]})
+        //join the item room for that websocket
+        client.emit('join-room', props.finalData._id)
+        setWebsocket(client)
     }, [])
 
-
     const tdata = {message: test}
-    
 
     const handlepost = () => {
         console.log("clicked")
@@ -33,10 +45,8 @@ const ItemInMarket = (props: fetchOneItemType) => {
 
     const receive_socket = async (socket: any) => {
         socket.on('message', (message: any) =>{
-            console.log(socket.id)
             console.log(message)
             setTest2(message)
-
         })
     }
 
@@ -47,13 +57,23 @@ const ItemInMarket = (props: fetchOneItemType) => {
         }, 1000)
     })
 
-
     if(_.isEmpty(props)){
         return(
             <div>
                 Fail to fetch data. This item might be outdated or not existed.
             </div>
         )
+    }
+
+    const submit_bid = (userID: string, item_id: string, bidAmount: number, userToken: string|null) => {
+        bidItem(userID, item_id, bidAmount, userToken).then((result) => {
+            console.log(result)
+            if(result.bid_item.message){
+                setBidErrorMsg(result.bid_item.message)
+            }else if(!result.bid_item.message && !result.bid_item.item_result){
+                setBidErrorMsg(result)
+            }
+        })
     }
 
     if(timeLeft == 0){
@@ -118,7 +138,8 @@ const ItemInMarket = (props: fetchOneItemType) => {
                 <div>
                     <input type="number" min={props.finalData.current_price ? props.finalData.current_price + props.finalData.per_price : props.finalData.start_price + props.finalData.per_price} value={bidAmount} step={props.finalData.per_price} className="text-center input_hiddenarrow font-familt_body3 text-lg rounded-md bg-gray-200 dark:bg-slate-800" onChange={(e) => {setBidAmount(parseInt(e.target.value))}}/>
                 </div>
-                <button className="px-2 mt-2 rounded-md font-family_header3 text-lg bg-gradient-to-t from-green-400 via-emerald-200 to-teal-300 dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500">Confirm</button>
+                <button className="px-2 mt-2 rounded-md font-family_header3 text-lg bg-gradient-to-t from-green-400 via-emerald-200 to-teal-300 dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500" onClick={() => submit_bid(userID, props.finalData._id, bidAmount, userToken)}>Confirm</button>
+                <div className="text-red-500">{bidErrorMsg}</div>
             </div>
 
             <div className="flex justify-center gap-5 my-8">

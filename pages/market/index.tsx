@@ -293,21 +293,25 @@ const Market = (props: fetchAllItemsType) => {
             <div className="flex flex-col mx-[6vw] grow">
               <div className="font-family_header3 font-semibold text-xl">{eachItems.name}</div>
               <div className="font-family_header2 text-[1.1rem]">
-                <div className="flex gap-1">Created at <div className="text-emerald-400 dark:text-sky-400">{convertRawTimeToFormatV2(eachItems.start_time)} (HKT)</div> By <div>{eachItems.owner_data.firstname} {eachItems.owner_data.lastname}</div>
+                <div className="flex gap-1">Created at <div className="text-teal-500 dark:text-sky-400">{convertRawTimeToFormatV2(eachItems.start_time)} (HKT)</div> By <div>{eachItems.owner_data.firstname} {eachItems.owner_data.lastname}</div>
                 </div>
               </div>
-              <div className="scrollbar pr-2 my-2 text-base font-family_body h-[75px] overflow-y-scroll text-justify snap-none">{eachItems.description}</div>
+              <div className="scrollbar pr-2 my-2 text-base h-[75px] overflow-y-scroll text-justify snap-none">{eachItems.description}</div>
               <div className="flex mt-1 justify-around text-lg font-family_body2">
                 <div className="">Start Price: {eachItems.start_price}</div>
+                <div className="flex gap-1 font-family_header3">
+                  Current Price: <div className="text-yellow-400 dark:text-amber-300">{eachItems.current_price ? eachItems.current_price : eachItems.start_price}</div>
+                </div>
                 <div className="">Bid Increment: {eachItems.per_price}</div>
-                <div className="">Current Price: {eachItems.current_price ? eachItems.start_price :eachItems.start_price}</div>
               </div>
               <div className="flex mt-1 justify-around text-lg font-family_body2">
-                <div className="">Top Bidder: {eachItems.bidder_data ? `${eachItems.bidder_data.firstname} ${eachItems.bidder_data.lastname}` : "--"}</div>
-                <div className="flex">
-                  Time Left: <div className={eachItems.time_left === "less than a minute" ? "text-red-600" : "text-blue-600 dark:text-cyan-300"}>{eachItems.time_left}
-                  </div>
+                <div className="flex gap-1">
+                    Top Bidder: <div className="text-teal-400 dark:text-cyan-300">{eachItems.bidder_data ? `${eachItems.bidder_data.firstname} ${eachItems.bidder_data.lastname}` : " --"}</div>
                 </div>
+                <div className="flex gap-1">
+                  Time Left: <div className={eachItems.time_left === "less than a minute" ? "text-red-600" : "text-teal-400 dark:text-cyan-300"}>{eachItems.time_left}
+                </div>
+              </div>
               </div>
               <div className="text-center mt-2">
                 <button className="text-center px-2 rounded-md font-family_header3 text-lg bg-gradient-to-t from-green-400 via-emerald-200 to-teal-300 dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500" onClick={() => redirectToItemPage(eachItems._id)}>Bid / See More Detail</button>
@@ -331,15 +335,18 @@ const Market = (props: fetchAllItemsType) => {
               <div className="scrollbar pr-2 my-2 text-base font-family_body h-[75px] overflow-y-scroll text-justify snap-none">{eachItems.description}</div>
               <div className="flex mt-1 justify-around text-lg font-family_body2">
                 <div className="">Start Price: {eachItems.start_price}</div>
-                <div className="">Per Price: {eachItems.per_price}</div>
-                <div className="">Current Price: {eachItems.current_price ? eachItems.start_price :eachItems.start_price}</div>
+                <div className="flex gap-1 font-family_header3">
+                  Current Price: <div className="text-yellow-400 dark:text-amber-300">{eachItems.current_price ? eachItems.current_price : eachItems.start_price}</div>
+                </div>
+                <div className="">Bid Increment: {eachItems.per_price}</div>
               </div>
               <div className="flex mt-1 justify-around text-lg font-family_body2">
-                {eachItems._id}
-                <div className="">Top Bidder: {eachItems.bidder_data ? `${eachItems.bidder_data.firstname} ${eachItems.bidder_data.lastname}` : "--"}</div>
-                <div className="flex">
-                  Time Left: <div className={eachItems.time_left === "less than a minute" ? "text-red-600" : "text-blue-600 dark:text-cyan-300"}>{eachItems.time_left}
-                  </div>
+                <div className="flex gap-1">
+                  Top Bidder: <div className="text-teal-400 dark:text-cyan-300">{eachItems.bidder_data ? `${eachItems.bidder_data.firstname} ${eachItems.bidder_data.lastname}` : " --"}</div>
+                </div>
+                <div className="flex gap-1">
+                  Time Left: <div className={eachItems.time_left === "less than a minute" ? "text-red-600" : "text-teal-400 dark:text-cyan-300"}>{eachItems.time_left}
+                </div>
                 </div>
               </div>
               <div className="text-center mt-2">

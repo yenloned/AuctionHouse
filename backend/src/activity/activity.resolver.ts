@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
 import { CreateItemDto } from 'src/items/dto/create-items.dto';
 import { ItemsService } from 'src/items/items.service';
@@ -42,6 +43,7 @@ export class ActivityResolver {
 
     @Mutation(() => CreateActivityDto)
     async create_Activity(@Args('input') input: ActivityInput){
+        Logger.log(`User ${input.user_id} ${input.action} Item ${input.item_id} at $ ${input.bid_price}`)
         return this.activityService.create(input)
     }
     

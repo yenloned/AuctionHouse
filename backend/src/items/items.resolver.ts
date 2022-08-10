@@ -2,10 +2,14 @@ import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 import { Resolver } from '@nestjs/graphql';
 import { CreateUserDto } from 'src/users/dto/create-users.dto';
 import { UsersService } from 'src/users/users.service';
+import { BidItemInput } from './inputs/bid-item.input';
 import { CreateItemDto } from './dto/create-items.dto';
 import { ItemInput } from './inputs/item.input';
 import { Item } from './items.schema';
 import { ItemsService } from './items.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UseGuards } from '@nestjs/common';
+import { BidItemDto } from './dto/bid-dto';
 
 @Resolver(() => CreateItemDto)
 export class ItemsResolver {
@@ -13,11 +17,6 @@ export class ItemsResolver {
         private itemsService: ItemsService,
         private usersService: UsersService
     ){}
-
-    @Query(() => String)
-    async helloitems(){
-        return "fuck you user"
-    }
 
     @Query(() => [CreateItemDto])
     async items(){
@@ -51,4 +50,17 @@ export class ItemsResolver {
         return this.usersService.findOne(bidder_id)
     }
 
+    @UseGuards(JwtAuthGuard)
+    @Mutation(() => BidItemDto)
+    async bid_item(@Args('input') input: BidItemInput){
+        const validResult = await this.itemsService.bid_valid(input)
+        if(validResult.result){
+            const item_result = this.itemsService.bid_item(input)
+            const user_result = this.itemsService.update_balance(input.userID, input.bid_price)
+
+            return {item_result, user_result}
+        }else{
+            return {message: validResult.message}
+        }
+    }
 }
