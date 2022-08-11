@@ -17,8 +17,12 @@ export class ActivityService {
     @InjectModel(Activity.name)
     private activityModel: Model<ActivityDocument>
 
-    async find_activity(userid: string): Promise<Activity | Activity[]>{
+    async find_activity_by_user(userid: string): Promise<Activity | Activity[]>{
         return this.activityModel.find({"user_id": userid})
+    }
+
+    async find_activity_by_item(itemid: string): Promise<Activity | Activity[]>{
+        return this.activityModel.find({"item_id": itemid})
     }
 
     async findAll_activity(): Promise<Activity[]> {

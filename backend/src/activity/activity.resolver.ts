@@ -16,14 +16,14 @@ export class ActivityResolver {
         private usersService: UsersService,
     ){}
 
-    @Query(() => String)
-    async helloActivity(){
-        return "fuck activity"
+    @Query(() => [CreateActivityDto])
+    async findUser_Activity(@Args('id') userid: string){
+        return this.activityService.find_activity_by_user(userid)
     }
 
     @Query(() => [CreateActivityDto])
-    async findUser_Activity(@Args('id') userid: string){
-        return this.activityService.find_activity(userid)
+    async findItem_Activity(@Args('id') itemID: string){
+        return this.activityService.find_activity_by_item(itemID)
     }
 
     @Query(() => [CreateActivityDto])

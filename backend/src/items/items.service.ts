@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Activity, ActivityDocument } from 'src/activity/activity.schema';
 import { User, UserDocument } from 'src/users/users.schema';
 import { UsersService } from 'src/users/users.service';
 import { BidItemInput } from './inputs/bid-item.input';
@@ -15,6 +16,9 @@ export class ItemsService {
 
     @InjectModel(Item.name)
     private itemModel: Model<ItemDocument>
+
+    @InjectModel(Activity.name)
+    private activityModel: Model<ActivityDocument>
 
     //constructor() {}
 
@@ -73,22 +77,29 @@ export class ItemsService {
     }
 
     async bid_item(input: BidItemInput): Promise<Item> {
-
-        try {
+        try{
             return this.itemModel.findByIdAndUpdate(input.item_id, {
                 bidder_id: input.userID,
                 bidder_time: new Date(),
                 current_price: input.bid_price
             });
             
-        } catch (e) {
+        }catch(e){
             return e;
         }
 
     }
 
-    async update_balance(userID: string, bid: number): Promise<User> {
-        return this.userModel.findByIdAndUpdate(userID, {"$inc": {"balance": -bid}})
+    async update_balance(itemID: string, userID: string, bid: number): Promise<User> {
+        const userData = await this.userModel.findOne({"_id": userID})
+        if(userData.biddingItem.includes(itemID)){
+            const all_bid = await this.activityModel.find({user_id: userID, item_id: itemID, action: "bidded"})
+            const latest_bid = all_bid[all_bid.length - 1]
+
+            const stacked_bid = bid - latest_bid.bid_price
+            return this.userModel.findByIdAndUpdate(userID, {"$inc": {"balance": -stacked_bid}})
+        }
+        return this.userModel.findByIdAndUpdate(userID, {"$inc": {"balance": -bid}, "$push": {"biddingItem": itemID}})
     }
 
 }

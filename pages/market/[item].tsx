@@ -9,6 +9,7 @@ import { io, Socket } from "socket.io-client"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
 import { bidItem } from "../../functions/api/bidItem"
 import { getUserIdFromJWT } from "../../functions/checkJWT"
+import { ActivityForWS, TopBidderForWS } from "../../interface/websocket"
 
 const ItemInMarket = (props: fetchOneItemType) => {
     const [timeLeft, setTimeLeft] = useState(0)
@@ -21,7 +22,12 @@ const ItemInMarket = (props: fetchOneItemType) => {
     //socketio
     const [test, setTest] = useState("aaaa")
     const [test2, setTest2] = useState("")
+
     const [websocket, setWebsocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap>>()
+    const [WS_currentprice, setWS_currentprice] = useState<number>()
+    const bidder_time = props.finalData.bidder_time
+    const [WS_topbidder, setWS_topbidder] = useState<TopBidderForWS | null>({...props.finalData.bidder_data, bidder_time})
+    const [WS_activity, setWS_activity] = useState<ActivityForWS[] | null>(props.finalData.bidding_activities)
 
     useEffect(() => {
         //get userID
@@ -98,7 +104,7 @@ const ItemInMarket = (props: fetchOneItemType) => {
                         Create Time: {convertRawTimeToFormat(props.finalData.start_time)}
                     </div>
                     <div className="font-family_header2 text-lg">
-                        Last Bid Time: {props.finalData.bidder_time ? convertRawTimeToFormat(props.finalData.bidder_time) : "--"}
+                        Last Bid Time: {props.finalData.bidder_time ? props.finalData.bidder_time : "--"}
                     </div>
                     <div className="font-family_body2 pr-2 mt-4 text-justify h-[240px] overflow-y-scroll scrollbar text-neutral-900 dark:text-slate-100">{props.finalData.description}
                     </div>
@@ -145,8 +151,28 @@ const ItemInMarket = (props: fetchOneItemType) => {
             <div className="flex justify-center gap-5 my-8">
                 <div className="flex flex-col">
                     <div className="text-center font-family_header4 font-bold text-xl mb-1">Top Bidder</div>
-                    <div className="flex py-4 px-6 w-[600px] bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg border-x-2 dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">
-                        sfkgjasfolaksjflkaasfasffffffffffffffffffffffffffffffffffffff
+                    <div className="flex py-4 px-6 w-[600px] h-[300px] justify-center items-center bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg border-x-2 dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">
+                        {WS_topbidder?.bidder_time ?
+                        <div className="flex gap-5">
+                            <img src={WS_topbidder.iconURL} className="w-[180px] h-[180px]"/>
+                            <div>
+                                <div className="flex flex-col text-center">
+                                    <div className="font-family_header2 text-xl"> Username </div>
+                                    <div className="font-family_body1 text-lg">{WS_topbidder.firstname} {WS_topbidder.lastname}</div>
+                                </div>
+                                <div className="flex flex-col text-center">
+                                    <div className="font-family_header2 text-xl"> User ID </div>
+                                    <div className="font-family_body1 text-lg">{WS_topbidder._id}</div>
+                                </div>
+                                <div className="flex flex-col text-center">
+                                    <div className="font-family_header2 text-xl"> Email Address </div>
+                                    <div className="font-family_body1 text-lg">{WS_topbidder.email}</div>
+                                </div>
+                            </div>
+                        </div>
+                        :
+                        "There is no Top Bidder yet. Submit your bid to be the first one."
+                        }
                     </div>
                 </div>
                 <div className="flex flex-col">
@@ -183,21 +209,30 @@ export async function getServerSideProps(context: any) {
                 name,
                 description,
                 owner_data{
-                  _id,
-                  firstname,
-                  lastname,
-                  email,
-                  iconURL
+                    _id,
+                    firstname,
+                    lastname,
+                    email,
+                    iconURL
                 },
                 start_price,
                 per_price,
                 current_price,
                 bidder_data{
-                  _id,
-                  firstname,
-                  lastname,
-                  email,
-                  iconURL
+                    _id,
+                    firstname,
+                    lastname,
+                    email,
+                    iconURL
+                },
+                bidding_activities{
+                    action,
+                    bid_price,
+                    timestamp
+                    user_data{
+                        firstname,
+                        lastname
+                    }
                 },
                 start_time,
                 end_time,

@@ -10,12 +10,15 @@ import { ItemsService } from './items.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { BidItemDto } from './dto/bid-dto';
+import { ActivityService } from 'src/activity/activity.service';
+import { CreateActivityDto } from 'src/activity/dto/create-activity.dto';
 
 @Resolver(() => CreateItemDto)
 export class ItemsResolver {
     constructor(
         private itemsService: ItemsService,
-        private usersService: UsersService
+        private usersService: UsersService,
+        private activityService: ActivityService
     ){}
 
     @Query(() => [CreateItemDto])
@@ -37,17 +40,34 @@ export class ItemsResolver {
     async find_item(@Args('id') id: string){
         return this.itemsService.findOne_item(id)
     }
-
+    //layer2
     @ResolveField(() => CreateUserDto)
     async owner_data(@Parent() itemDto: CreateItemDto){
         const { owner_id } = itemDto;
         return this.usersService.findOne(owner_id)
     }
-
     @ResolveField(() => CreateUserDto)
     async bidder_data(@Parent() itemDto: CreateItemDto){
         const { bidder_id } = itemDto;
         return this.usersService.findOne(bidder_id)
+    }
+    @ResolveField(() => [CreateActivityDto])
+    async bidding_activities(@Parent() itemDto: CreateItemDto){
+        const { _id } = itemDto;
+        const convertedID = _id.toString()
+        const result = await this.activityService.find_activity_by_item(convertedID)
+        return result
+    }
+    //layer3
+    @ResolveField(() => CreateUserDto)
+    async user_data(@Parent() activityDto: CreateActivityDto){
+        const { user_id } = activityDto;
+        return this.usersService.findOne(user_id)
+    }
+    @ResolveField(() => CreateItemDto)
+    async item_data(@Parent() activityDto: CreateActivityDto){
+        const { item_id } = activityDto
+        return this.itemsService.findOne_item(item_id)
     }
 
     @UseGuards(JwtAuthGuard)
@@ -56,9 +76,18 @@ export class ItemsResolver {
         const validResult = await this.itemsService.bid_valid(input)
         if(validResult.result){
             const item_result = this.itemsService.bid_item(input)
-            const user_result = this.itemsService.update_balance(input.userID, input.bid_price)
+            const user_result = this.itemsService.update_balance(input.item_id, input.userID, input.bid_price)
+            const activity_input = {
+                user_id: input.userID,
+                item_id: input.item_id,
+                timestamp: new Date().toString(),
+                sortedTimestamp: null,
+                action: "bidded",
+                bid_price: input.bid_price
+            }
+            const activity_result = this.activityService.create(activity_input)
 
-            return {item_result, user_result}
+            return {item_result, user_result, activity_result}
         }else{
             return {message: validResult.message}
         }

@@ -28,6 +28,10 @@ export const bidItem = async (userID: string, item_id: string, bid_price: number
         })
         return data;
     }catch(e){
-        return "Submit bid failed. Make sure you have logged in your account and entered a valid bid";
+        return {
+            bid_item:{
+                message: "You are required to login before submit the bid."
+            }
+        };
     }
 }

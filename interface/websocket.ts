@@ -1,18 +1,21 @@
-export interface ServerToClientEvents {
-    noArg: () => void;
-    basicEmit: (a: number, b: string, c: Buffer) => void;
-    withAck: (d: string, callback: (e: number) => void) => void;
-  }
-  
-export interface ClientToServerEvents {
-    hello: () => void;
+export interface TopBidderForWS {
+    email: string;
+    firstname: string;
+    lastname: string;
+    _id: string;
+    iconURL: string;
+    bidder_time: string|null;
 }
 
-export interface InterServerEvents {
-    ping: () => void;
+export interface ActivityForWS {
+    action: string,
+    bid_price: number,
+    timestamp: string,
+    user_data: eachActivityForWS
 }
 
-export interface SocketData {
-    name: string;
-    age: number;
+export interface eachActivityForWS {
+    firstname: string,
+    lastname: string
 }
+

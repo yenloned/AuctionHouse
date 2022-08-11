@@ -1,3 +1,5 @@
+import { ActivityForWS } from "./websocket"
+
 export type fetchAllItemsType = {
     defaultSortedItems: allItemsType[]
 }
@@ -15,6 +17,7 @@ export type allItemsType = {
     per_price: number,
     current_price: number | null,
     bidder_data: userFromItemType,
+    bidding_activities: ActivityForWS[] | null,
     start_time: string,
     end_time: string,
     bidder_time: string | null,

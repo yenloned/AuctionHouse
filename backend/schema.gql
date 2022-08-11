@@ -15,36 +15,6 @@ type CreateUserDto {
   iconURL: String!
 }
 
-type CreateItemDto {
-  _id: ID!
-  name: String!
-  description: String!
-  owner_id: String!
-  owner_data: CreateUserDto
-  start_price: Int!
-  per_price: Int!
-  current_price: Int
-  bidder_id: String!
-  bidder_data: CreateUserDto
-  end_price: Int
-  start_time: String!
-  bidder_time: String
-  end_time: String!
-  time_left: String
-  photo_URL: String!
-}
-
-type BidItemDto {
-  item_result: CreateItemDto
-  user_result: CreateUserDto
-  message: String
-}
-
-type LoginResponse {
-  access_token: String!
-  user: CreateUserDto!
-}
-
 type CreateActivityDto {
   _id: ID!
   action: String!
@@ -57,6 +27,40 @@ type CreateActivityDto {
   bid_price: Int
 }
 
+type CreateItemDto {
+  _id: ID!
+  name: String!
+  description: String!
+  owner_id: String!
+  owner_data: CreateUserDto
+  start_price: Int!
+  per_price: Int!
+  current_price: Int
+  bidder_id: String!
+  bidder_data: CreateUserDto
+  bidding_activities: [CreateActivityDto!]
+  end_price: Int
+  start_time: String!
+  bidder_time: String
+  end_time: String!
+  time_left: String
+  photo_URL: String!
+  user_data: CreateUserDto!
+  item_data: CreateItemDto!
+}
+
+type BidItemDto {
+  item_result: CreateItemDto
+  user_result: CreateUserDto
+  activity_result: CreateActivityDto
+  message: String
+}
+
+type LoginResponse {
+  access_token: String!
+  user: CreateUserDto!
+}
+
 type Query {
   hello: String!
   users: [CreateUserDto!]!
@@ -66,8 +70,8 @@ type Query {
   findAll_items: [CreateItemDto!]!
   find_item(id: String!): CreateItemDto!
   hello_auth: String!
-  helloActivity: String!
   findUser_Activity(id: String!): [CreateActivityDto!]!
+  findItem_Activity(id: String!): [CreateActivityDto!]!
   findAll_Activity: [CreateActivityDto!]!
 }
 

@@ -1,4 +1,5 @@
 import { Int, Field, ObjectType, ID, GraphQLTimestamp } from "@nestjs/graphql";
+import { CreateActivityDto } from "src/activity/dto/create-activity.dto";
 import { CreateUserDto } from "src/users/dto/create-users.dto";
 
 @ObjectType()
@@ -27,6 +28,8 @@ export class CreateItemDto {
   //bidder data from resolveField
   @Field(() => CreateUserDto, {nullable: true})
   readonly bidder_data?: CreateUserDto;
+  @Field(() => [CreateActivityDto], {nullable: true})
+  readonly bidding_activities?: CreateActivityDto[];
   @Field(() => Int, {nullable: true})
   readonly end_price?: number;
   @Field()
