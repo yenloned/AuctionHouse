@@ -1,3 +1,8 @@
+export interface marketItemForWS {
+    bidderActivity: ActivityForWS;
+    topBidder: TopBidderForWS;
+}
+
 export interface TopBidderForWS {
     email: string;
     firstname: string;

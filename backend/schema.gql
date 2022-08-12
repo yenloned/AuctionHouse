@@ -54,6 +54,7 @@ type BidItemDto {
   user_result: CreateUserDto
   activity_result: CreateActivityDto
   message: String
+  timestamp: String
 }
 
 type LoginResponse {
@@ -123,6 +124,7 @@ input BidItemInput {
   item_id: String!
   userID: String!
   bid_price: Int!
+  timestamp: String!
 }
 
 input RegisterInput {

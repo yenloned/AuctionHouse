@@ -9,7 +9,7 @@ import { io, Socket } from "socket.io-client"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
 import { bidItem } from "../../functions/api/bidItem"
 import { getUserIdFromJWT } from "../../functions/checkJWT"
-import { ActivityForWS, TopBidderForWS } from "../../interface/websocket"
+import { ActivityForWS, marketItemForWS, TopBidderForWS } from "../../interface/websocket"
 
 const ItemInMarket = (props: fetchOneItemType) => {
     const [timeLeft, setTimeLeft] = useState(0)
@@ -41,6 +41,7 @@ const ItemInMarket = (props: fetchOneItemType) => {
         setWebsocket(client)
     }, [])
 
+    //socketio draft
     const tdata = {message: test}
 
     const handlepost = () => {
@@ -55,6 +56,7 @@ const ItemInMarket = (props: fetchOneItemType) => {
             setTest2(message)
         })
     }
+
 
     useEffect(() => {
         const {end_time} = props.finalData
@@ -71,15 +73,40 @@ const ItemInMarket = (props: fetchOneItemType) => {
         )
     }
 
+    //socketio listen all bid submit
+    websocket?.on('bid_update', (WS_bidItem: marketItemForWS) =>{
+        if(WS_bidItem.bidderActivity && WS_bidItem.topBidder){
+            setWS_topbidder(WS_bidItem.topBidder)
+        }
+    })
+
+    //graphql + socketio submit the bid
     const submit_bid = (userID: string, item_id: string, bidAmount: number, userToken: string|null) => {
         const timestamp = new Date().toString()
+        const bid_input = {
+            item_id: item_id,
+            userID: userID,
+            bid_price: bidAmount,
+            timestamp: timestamp
+        }
         bidItem(userID, item_id, bidAmount, userToken, timestamp).then((result) => {
             console.log(result)
             if(result.bid_item.message){
                 setBidErrorMsg(result.bid_item.message)
             }else if(!result.bid_item.message && !result.bid_item.item_result){
                 setBidErrorMsg(result)
-            }//else socket emit
+            }else{
+                console.log("sending socket")
+                const bidItemDto = {
+                    ...bid_input,
+                    email: result.bid_item.user_result.email,
+                    firstname: result.bid_item.user_result.firstname,
+                    lastname: result.bid_item.user_result.lastname,
+                    user_id: result.bid_item.user_result._id,
+                    iconURL: result.bid_item.user_result.iconURL,
+                }
+                websocket?.emit('bid_item', bidItemDto)
+            }
         })
     }
 
@@ -105,7 +132,7 @@ const ItemInMarket = (props: fetchOneItemType) => {
                         Create Time: {convertRawTimeToFormat(props.finalData.start_time)}
                     </div>
                     <div className="font-family_header2 text-lg">
-                        Last Bid Time: {props.finalData.bidder_time ? props.finalData.bidder_time : "--"}
+                        Last Bid Time: {WS_topbidder?.bidder_time ? WS_topbidder?.bidder_time : "--"}
                     </div>
                     <div className="font-family_body2 pr-2 mt-4 text-justify h-[240px] overflow-y-scroll scrollbar text-neutral-900 dark:text-slate-100">{props.finalData.description}
                     </div>
