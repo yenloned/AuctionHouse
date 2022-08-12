@@ -16,4 +16,7 @@ export class BidItemDto {
 
     @Field({nullable: true})
     message?: string
+
+    @Field({nullable: true})
+    timestamp?: string
 }

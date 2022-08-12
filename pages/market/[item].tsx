@@ -72,13 +72,14 @@ const ItemInMarket = (props: fetchOneItemType) => {
     }
 
     const submit_bid = (userID: string, item_id: string, bidAmount: number, userToken: string|null) => {
-        bidItem(userID, item_id, bidAmount, userToken).then((result) => {
+        const timestamp = new Date().toString()
+        bidItem(userID, item_id, bidAmount, userToken, timestamp).then((result) => {
             console.log(result)
             if(result.bid_item.message){
                 setBidErrorMsg(result.bid_item.message)
             }else if(!result.bid_item.message && !result.bid_item.item_result){
                 setBidErrorMsg(result)
-            }
+            }//else socket emit
         })
     }
 
@@ -160,7 +161,7 @@ const ItemInMarket = (props: fetchOneItemType) => {
                                     <div className="font-family_header2 text-xl"> Username </div>
                                     <div className="font-family_body1 text-lg">{WS_topbidder.firstname} {WS_topbidder.lastname}</div>
                                 </div>
-                                <div className="flex flex-col text-center">
+                                <div className="flex flex-col  text-center">
                                     <div className="font-family_header2 text-xl"> User ID </div>
                                     <div className="font-family_body1 text-lg">{WS_topbidder._id}</div>
                                 </div>

@@ -10,4 +10,7 @@ export class BidItemInput{
 
     @Field(() => Int)
     bid_price: number
+
+    @Field()
+    timestamp: string
 }

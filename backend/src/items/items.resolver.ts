@@ -86,8 +86,8 @@ export class ItemsResolver {
                 bid_price: input.bid_price
             }
             const activity_result = this.activityService.create(activity_input)
-
-            return {item_result, user_result, activity_result}
+            const timestamp = input.timestamp
+            return {item_result, user_result, activity_result, timestamp}
         }else{
             return {message: validResult.message}
         }

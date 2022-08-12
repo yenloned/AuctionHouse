@@ -20,7 +20,9 @@ export class ItemsService {
     @InjectModel(Activity.name)
     private activityModel: Model<ActivityDocument>
 
-    //constructor() {}
+    constructor(
+        private usersService: UsersService
+    ) {}
 
     async create(createItemDto: ItemInput): Promise<Item> {
         const createdItem = new this.itemModel(createItemDto);
@@ -45,6 +47,7 @@ export class ItemsService {
 
     async bid_valid(input: BidItemInput): Promise<validBid_result> {
         const itemData = await this.findOne_item(input.item_id)
+        const userData = await this.usersService.findOne(input.userID)
 
         if (!itemData.owner_id) {
             return {
@@ -70,6 +73,12 @@ export class ItemsService {
                 message: "Submit Failed, invalid bid amount."
             };
         }
+        if (userData.balance < input.bid_price){
+            return {
+                result: false,
+                message: "You do not have enough balance to submit this bid."
+            }
+        }
         return {
             result: true,
             message: ""
@@ -80,7 +89,7 @@ export class ItemsService {
         try{
             return this.itemModel.findByIdAndUpdate(input.item_id, {
                 bidder_id: input.userID,
-                bidder_time: new Date(),
+                bidder_time: input.timestamp,
                 current_price: input.bid_price
             });
             
