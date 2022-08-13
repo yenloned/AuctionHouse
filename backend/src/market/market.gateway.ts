@@ -50,9 +50,16 @@ export class MarketGateway{
             timestamp: bidItemDto.timestamp,
             user_data: {
                 firstname: bidItemDto.firstname,
-                lastname: bidItemDto.lastname
+                lastname: bidItemDto.lastname,
+                iconURL: bidItemDto.iconURL
             }
         }
+        const itemData = {
+            item_id: bidItemDto.item_id,
+            item_name: bidItemDto.item_name,
+            item_iconURL: bidItemDto.item_icon
+        }
+        this.server.emit("market_lobbyUpdate", {itemData, bidderActivity})
         this.server.to(bidItemDto.item_id).emit("bid_update", {topBidder, bidderActivity})
     }
 }

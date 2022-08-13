@@ -14,7 +14,9 @@ export const bidItem = async (userID: string, item_id: string, bid_price: number
             `mutation{
               bid_item(input: {item_id: "${item_id}", userID: "${userID}", bid_price: ${bid_price}, timestamp: "${timestamp}"}){
                 item_result{
-                    _id
+                    _id,
+                    name,
+                    photo_URL
                 },
                 user_result{
                     email,

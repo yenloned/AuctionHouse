@@ -75,8 +75,8 @@ export class ItemsResolver {
     async bid_item(@Args('input') input: BidItemInput){
         const validResult = await this.itemsService.bid_valid(input)
         if(validResult.result){
-            const item_result = this.itemsService.bid_item(input)
-            const user_result = this.itemsService.update_balance(input.item_id, input.userID, input.bid_price)
+            const user_result = await this.itemsService.update_balance(input.item_id, input.userID, input.bid_price)
+            const item_result = await this.itemsService.bid_item(input)
             const activity_input = {
                 user_id: input.userID,
                 item_id: input.item_id,
@@ -85,7 +85,7 @@ export class ItemsResolver {
                 action: "bidded",
                 bid_price: input.bid_price
             }
-            const activity_result = this.activityService.create(activity_input)
+            const activity_result = await this.activityService.create(activity_input)
             const timestamp = input.timestamp
             return {item_result, user_result, activity_result, timestamp}
         }else{

@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react"
-import { SearchIcon, ChevronLeftIcon, ChevronRightIcon, LockClosedIcon, ClockIcon } from "@heroicons/react/solid"
+import { SearchIcon, ChevronLeftIcon, ChevronRightIcon, LockClosedIcon, ClockIcon, BellIcon } from "@heroicons/react/solid"
 import { io, Socket } from "socket.io-client"
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
-import { allActivitiesType, allItemsType, fetchAllActivitiesType, fetchAllItemsType } from "../../interface/marketFetching"
+import { allActivitiesType, allItemsType, fetchAllItemsType } from "../../interface/marketFetching"
 import { checkIfTimeStillValid, convertActivityTimestamp, convertItemsTimestamp, convertRawTimeToFormatV2, convertRawTimeToFormatV3, initTimeDifference, secondsDifference} from "../../functions/dateTime"
 import _ from "lodash"
 import { activityChoice_active, activityChoice_inactive, sortingChoices_active, sortingChoices_inactive } from "../../styles/classNames"
@@ -10,6 +10,8 @@ import LoadingSpinner from "../../comps/LoadingSpinner"
 import LoginStatusContext from "../../context/userLogin"
 import { checkIfJWTexpired, getUserIdFromJWT } from "../../functions/checkJWT"
 import { getUserActivity } from "../../functions/api/getUserActivity"
+import { DefaultEventsMap } from "socket.io/dist/typed-events"
+import { ActivityForLobbyWS, marketLobbyForWS } from "../../interface/websocket"
 
 export async function getServerSideProps(){
   const client = new ApolloClient({
@@ -83,32 +85,23 @@ const Market = (props: fetchAllItemsType) => {
 
   const [userActivity, setUserActivity] = useState<allActivitiesType[]>([])
 
-  //socketio draft
-  /*
-  const [test, setTest] = useState("aaaa")
-  const [test2, setTest2] = useState("")
-  const socket = io("http://localhost:6001", {transports: ['websocket']})
+  //socketio
+  const [websocket, setWebsocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap>>()
+  const [WS_recentActivity, setWS_recentActivity] = useState<ActivityForLobbyWS[]>()
+  useEffect(() => {
+    const socket = io("http://localhost:6001", {transports: ['websocket']})
+    setWebsocket(socket)
+  },[])
 
-  const tdata = {message: "hello"}
-  
-
-  const handlepost = () => {
-    console.log("clicked")
-    socket.emit('send-message', tdata, (r: any) =>{
-      console.log(r)
-    })
-  }
-
-  socket.on('message', (message: any) =>{
-    console.log(message)
-    handleNewMessage(socket.id)
-    handleNewMessage(message)
-  })
-
-  const handleNewMessage = (message: any) => {
-    setTest2(message)
-  }
-  */
+  websocket?.on("market_lobbyUpdate", (WS_newRecentActivity: marketLobbyForWS) => {
+    const {bidderActivity} = WS_newRecentActivity
+    const {itemData} = WS_newRecentActivity
+    if(WS_recentActivity){
+      setWS_recentActivity([...WS_recentActivity, {...bidderActivity, ...itemData}])
+    }else{
+      setWS_recentActivity([{...bidderActivity, ...itemData}])
+    }
+  } )
 
   useEffect(() => {
     if(props.defaultSortedItems.length > 2*4){
@@ -230,10 +223,36 @@ const Market = (props: fetchAllItemsType) => {
       <div className="mx-[8vw] h-[180px] mb-5 bg-gradient-to-t from-neutral-200 via-slate-50 to-neutral-100 shadow-lg px-10 border-x-2 py-4 overflow-y-scroll scrollbar
       dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">
         { 
+          activityChoice === "recent activity" && WS_recentActivity ?
+          <div className="">
+            {WS_recentActivity.map((eachActivity) => {
+              return(
+                <div className="flex gap-1 items-end" key={eachActivity.timestamp}>
+                  <div className="font-family_body4 text-[1.1rem]">{convertRawTimeToFormatV3(eachActivity.timestamp)} (HKT)</div>
+                  <img src={eachActivity.user_data.iconURL} className="w-[50px] h-[46px] border-2 mx-1"/>
+                  <div className="text-[1.05rem]">{eachActivity.user_data.firstname} {eachActivity.user_data.lastname}</div>
+                  <div className="text-[1.05rem]">{eachActivity.action}</div>
+                  <img src={eachActivity.item_iconURL} className="w-[50px] h-[46px] border-2 mx-1" />
+                  <div className="cursor-pointer text-[1.05rem] underline hover:text-emerald-500 dark:hover:text-sky-400" onClick={() => window.location.replace(`market/${eachActivity.item_id}`)}>{eachActivity.item_name}</div>
+                  {
+                    eachActivity.action === "bidded" || eachActivity.action === "won" ?
+                    <div className="mx-1">by $ {eachActivity.bid_price}</div>  : ""
+                  }
+                </div>
+              )
+            })}
+          </div>
+          :
+          activityChoice === "recent activity" && !WS_recentActivity ?
+          <div className="flex flex-col text-center font-family_body1 items-center">
+            <BellIcon className="w-[50px] h-[50px] mt-2"/>
+            <div className="mt-2 text-lg">There is no activities so far.</div>
+          </div>
+          :
           activityChoice === "my activity" && userActivity[0] ?
           <div className="flex flex-col gap-2">
           {
-            userActivity.map((eachActivity) => {
+            userActivity.slice().reverse().map((eachActivity) => {
               return(
                 <div key={eachActivity._id} className="flex items-end gap-2">
                   <div className="font-family_body4 text-[1.1rem]">{convertRawTimeToFormatV3(eachActivity.timestamp)} (HKT)</div>
@@ -254,7 +273,7 @@ const Market = (props: fetchAllItemsType) => {
           activityChoice === "my activity" && userID ?
           <div className="flex flex-col text-center font-family_body1 items-center">
             <ClockIcon className="w-[50px] h-[50px] mt-2"/>
-            <div className="mt-2 text-lg">You have no activies so far.</div>
+            <div className="mt-2 text-lg">You have no activities so far.</div>
           </div> 
           :
           activityChoice === "my activity" && !loginStatus?.isLoggedIn ?
@@ -293,7 +312,7 @@ const Market = (props: fetchAllItemsType) => {
             <div className="flex flex-col mx-[6vw] grow">
               <div className="font-family_header3 font-semibold text-xl">{eachItems.name}</div>
               <div className="font-family_header2 text-[1.1rem]">
-                <div className="flex gap-1">Created at <div className="text-teal-500 dark:text-sky-400">{convertRawTimeToFormatV2(eachItems.start_time)} (HKT)</div> By <div>{eachItems.owner_data.firstname} {eachItems.owner_data.lastname}</div>
+                <div className="flex gap-1">Created at <div className="text-emerald-500 dark:text-sky-400">{convertRawTimeToFormatV2(eachItems.start_time)} (HKT)</div> By <div>{eachItems.owner_data.firstname} {eachItems.owner_data.lastname}</div>
                 </div>
               </div>
               <div className="scrollbar pr-2 my-2 text-base h-[75px] overflow-y-scroll text-justify snap-none">{eachItems.description}</div>
@@ -306,10 +325,10 @@ const Market = (props: fetchAllItemsType) => {
               </div>
               <div className="flex mt-1 justify-around text-lg font-family_body2">
                 <div className="flex gap-1">
-                    Top Bidder: <div className="text-teal-400 dark:text-cyan-300">{eachItems.bidder_data ? `${eachItems.bidder_data.firstname} ${eachItems.bidder_data.lastname}` : " --"}</div>
+                    Top Bidder: <div className="text-emerald-500 dark:text-cyan-300">{eachItems.bidder_data ? `${eachItems.bidder_data.firstname} ${eachItems.bidder_data.lastname}` : " --"}</div>
                 </div>
                 <div className="flex gap-1">
-                  Time Left: <div className={eachItems.time_left === "less than a minute" ? "text-red-600" : "text-teal-400 dark:text-cyan-300"}>{eachItems.time_left}
+                  Time Left: <div className={eachItems.time_left === "less than a minute" ? "text-red-600" : "text-emerald-500 dark:text-cyan-300"}>{eachItems.time_left}
                 </div>
               </div>
               </div>
@@ -329,7 +348,7 @@ const Market = (props: fetchAllItemsType) => {
             <div className="flex flex-col mx-[6vw] grow">
               <div className="font-family_header3 font-semibold text-xl">{eachItems.name}</div>
               <div className="font-family_header2 text-[1.1rem]">
-                <div className="flex gap-1">Created at <div className="text-emerald-400 dark:text-sky-400">{convertRawTimeToFormatV2(eachItems.start_time)} (HKT)</div> By <div>{eachItems.owner_data.firstname} {eachItems.owner_data.lastname}</div>
+                <div className="flex gap-1">Created at <div className="text-emerald-500 dark:text-sky-400">{convertRawTimeToFormatV2(eachItems.start_time)} (HKT)</div> By <div>{eachItems.owner_data.firstname} {eachItems.owner_data.lastname}</div>
                 </div>
               </div>
               <div className="scrollbar pr-2 my-2 text-base font-family_body h-[75px] overflow-y-scroll text-justify snap-none">{eachItems.description}</div>
@@ -342,10 +361,10 @@ const Market = (props: fetchAllItemsType) => {
               </div>
               <div className="flex mt-1 justify-around text-lg font-family_body2">
                 <div className="flex gap-1">
-                  Top Bidder: <div className="text-teal-400 dark:text-cyan-300">{eachItems.bidder_data ? `${eachItems.bidder_data.firstname} ${eachItems.bidder_data.lastname}` : " --"}</div>
+                  Top Bidder: <div className="text-emerald-500 dark:text-cyan-300">{eachItems.bidder_data ? `${eachItems.bidder_data.firstname} ${eachItems.bidder_data.lastname}` : " --"}</div>
                 </div>
                 <div className="flex gap-1">
-                  Time Left: <div className={eachItems.time_left === "less than a minute" ? "text-red-600" : "text-teal-400 dark:text-cyan-300"}>{eachItems.time_left}
+                  Time Left: <div className={eachItems.time_left === "less than a minute" ? "text-red-600" : "text-emerald-500 dark:text-cyan-300"}>{eachItems.time_left}
                 </div>
                 </div>
               </div>

@@ -6,6 +6,12 @@ export class WS_BidItemDto{
     item_id: string
 
     @Field()
+    item_name: string
+
+    @Field()
+    item_icon: string
+
+    @Field()
     userID: string
 
     @Field(() => Int)
@@ -28,4 +34,7 @@ export class WS_BidItemDto{
 
     @Field()
     iconURL: string
+
+    @Field()
+    user_iconURL: string
 }

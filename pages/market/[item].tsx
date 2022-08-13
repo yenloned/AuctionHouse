@@ -1,8 +1,10 @@
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
 import { fetchOneItemType } from "../../interface/marketFetching"
+import Image from "next/image"
+import emptyBox from "../../media/png/emptyBox.png"
 import _ from "lodash"
 import { useEffect, useState } from "react"
-import { convertItemTimestamp, convertRawTimeToFormat, convertRawTimeToFormatV2, secondsDifference, timeDifference } from "../../functions/dateTime"
+import { convertItemTimestamp, convertRawTimeToFormat, convertRawTimeToFormatV3, secondsDifference, timeDifference } from "../../functions/dateTime"
 import { formatMoney } from "../../functions/displayFormat"
 import LoadingSpinner from "../../comps/LoadingSpinner"
 import { io, Socket } from "socket.io-client"
@@ -20,9 +22,6 @@ const ItemInMarket = (props: fetchOneItemType) => {
     const [bidErrorMsg, setBidErrorMsg] = useState("")
 
     //socketio
-    const [test, setTest] = useState("aaaa")
-    const [test2, setTest2] = useState("")
-
     const [websocket, setWebsocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap>>()
     const [WS_currentprice, setWS_currentprice] = useState<number>()
     const bidder_time = props.finalData.bidder_time
@@ -41,23 +40,6 @@ const ItemInMarket = (props: fetchOneItemType) => {
         setWebsocket(client)
     }, [])
 
-    //socketio draft
-    const tdata = {message: test}
-
-    const handlepost = () => {
-        console.log("clicked")
-        websocket?.emit('send-message', tdata)
-        receive_socket(websocket)
-    }
-
-    const receive_socket = async (socket: any) => {
-        socket.on('message', (message: any) =>{
-            console.log(message)
-            setTest2(message)
-        })
-    }
-
-
     useEffect(() => {
         const {end_time} = props.finalData
         setInterval(() =>{
@@ -75,8 +57,15 @@ const ItemInMarket = (props: fetchOneItemType) => {
 
     //socketio listen all bid submit
     websocket?.on('bid_update', (WS_bidItem: marketItemForWS) =>{
+        //console.log(WS_bidItem.bidderActivity)
         if(WS_bidItem.bidderActivity && WS_bidItem.topBidder){
             setWS_topbidder(WS_bidItem.topBidder)
+            setWS_currentprice(WS_bidItem.bidderActivity.bid_price)
+            if(WS_activity){
+                setWS_activity([...WS_activity, WS_bidItem.bidderActivity])
+            }else{
+                setWS_activity([WS_bidItem.bidderActivity])
+            }
         }
     })
 
@@ -90,13 +79,12 @@ const ItemInMarket = (props: fetchOneItemType) => {
             timestamp: timestamp
         }
         bidItem(userID, item_id, bidAmount, userToken, timestamp).then((result) => {
-            console.log(result)
+            //console.log(result)
             if(result.bid_item.message){
                 setBidErrorMsg(result.bid_item.message)
             }else if(!result.bid_item.message && !result.bid_item.item_result){
                 setBidErrorMsg(result)
             }else{
-                console.log("sending socket")
                 const bidItemDto = {
                     ...bid_input,
                     email: result.bid_item.user_result.email,
@@ -104,6 +92,8 @@ const ItemInMarket = (props: fetchOneItemType) => {
                     lastname: result.bid_item.user_result.lastname,
                     user_id: result.bid_item.user_result._id,
                     iconURL: result.bid_item.user_result.iconURL,
+                    item_name: result.bid_item.item_result.name,
+                    item_icon: result.bid_item.item_result.photo_URL,
                 }
                 websocket?.emit('bid_item', bidItemDto)
             }
@@ -123,16 +113,17 @@ const ItemInMarket = (props: fetchOneItemType) => {
                     <div className="font-family_header3 text-2xl">
                         {props.finalData.name}
                     </div>
-                    <div className="font-family_body3 text-sm text-neutral-600 dark:text-gray-300">
+                    <div className="font-family_body3 text-sm text-neutral-300 dark:text-gray-500">
                         {props.finalData._id}
                     </div>
-                    <div className="font-family_header2 text-lg">
-                        Creator: {props.finalData.owner_data.firstname} {props.finalData.owner_data.lastname}</div>
-                    <div className="font-family_header2 text-lg">
-                        Create Time: {convertRawTimeToFormat(props.finalData.start_time)}
+                    <div className="flex gap-2 font-family_header2 text-lg">
+                        Creator: <div className="text-cyan-600 dark:text-teal-300">{props.finalData.owner_data.firstname} {props.finalData.owner_data.lastname}</div>
                     </div>
-                    <div className="font-family_header2 text-lg">
-                        Last Bid Time: {WS_topbidder?.bidder_time ? WS_topbidder?.bidder_time : "--"}
+                    <div className="flex gap-2 font-family_header2 text-lg">
+                        Create Time: <div className="text-cyan-600 dark:text-teal-300">{convertRawTimeToFormat(props.finalData.start_time)}</div>
+                    </div>
+                    <div className="flex gap-2 font-family_header2 text-lg">
+                        Last Bid Time: <div className="text-cyan-600 dark:text-teal-300">{WS_topbidder?.bidder_time ? WS_topbidder?.bidder_time : "--"}</div>
                     </div>
                     <div className="font-family_body2 pr-2 mt-4 text-justify h-[240px] overflow-y-scroll scrollbar text-neutral-900 dark:text-slate-100">{props.finalData.description}
                     </div>
@@ -143,26 +134,28 @@ const ItemInMarket = (props: fetchOneItemType) => {
             <div className="flex justify-evenly text-center my-8">
                 <div className="flex flex-col w-[200px]">
                     <div className="font-family_header4 text-xl font-bold">Start Price</div>
-                    <div className="font-family_header3 text-xl text-teal-400 dark:text-cyan-300">
+                    <div className="font-family_header3 text-xl text-cyan-600 dark:text-cyan-300">
                         $ {formatMoney(props.finalData.start_price)}
                     </div>
                 </div>
                 <div className="flex flex-col w-[200px]">
                     <div className="font-family_header4 text-xl font-bold">Current Price</div>
-                    <div className="font-family_header3 text-xl text-teal-400 dark:text-cyan-300">
-                        {props.finalData.current_price ? `$ ${formatMoney(props.finalData.current_price)}` : "--"}
+                    <div className="font-family_header3 text-xl text-cyan-600 dark:text-cyan-300">
+                        {WS_currentprice ? `$ ${formatMoney(WS_currentprice)}` : 
+                        props.finalData.current_price ? `$ ${formatMoney(props.finalData.current_price)}`: 
+                        "--"}
                     </div>
                 </div>
                 <div className="flex flex-col w-[200px]">
                     <div className="font-family_header4 text-xl font-bold">Bid Increment</div>
-                    <div className="font-family_header3 text-xl text-teal-400 dark:text-cyan-300">$ {formatMoney(props.finalData.per_price)}</div>
+                    <div className="font-family_header3 text-xl text-cyan-600 dark:text-cyan-300">$ {formatMoney(props.finalData.per_price)}</div>
                 </div>
             </div>
 
             <div className="text-center my-4">
                 <div className="font-family_header4 text-xl font-bold">Bidding Time Left</div>
                 <div className="font-family_body3 text-xl">
-                    <div className={timeDifference(timeLeft).match(/.*hour*/) ? "text-amber-400" : timeDifference(timeLeft).match(/.*second*/) ? "text-red-600 dark:text-red-500" : "text-cyan-400"}>{timeDifference(timeLeft)}
+                    <div className={timeDifference(timeLeft).match(/.*hour*/) ? "text-amber-400" : timeDifference(timeLeft).match(/.*second*/) ? "text-red-600 dark:text-red-500" : "font-bold text-teal-500 dark:text-cyan-400"}>{timeDifference(timeLeft)}
                     </div>
                 </div>
             </div>
@@ -183,37 +176,55 @@ const ItemInMarket = (props: fetchOneItemType) => {
                         {WS_topbidder?.bidder_time ?
                         <div className="flex gap-5">
                             <img src={WS_topbidder.iconURL} className="w-[180px] h-[180px]"/>
-                            <div>
+                            <div className="flex flex-col gap-3">
                                 <div className="flex flex-col text-center">
-                                    <div className="font-family_header2 text-xl"> Username </div>
-                                    <div className="font-family_body1 text-lg">{WS_topbidder.firstname} {WS_topbidder.lastname}</div>
-                                </div>
-                                <div className="flex flex-col  text-center">
-                                    <div className="font-family_header2 text-xl"> User ID </div>
-                                    <div className="font-family_body1 text-lg">{WS_topbidder._id}</div>
+                                    <div className="font-family_header3 text-lg"> Username </div>
+                                    <div className="font-family_body2 text-lg">{WS_topbidder.firstname} {WS_topbidder.lastname}</div>
                                 </div>
                                 <div className="flex flex-col text-center">
-                                    <div className="font-family_header2 text-xl"> Email Address </div>
-                                    <div className="font-family_body1 text-lg">{WS_topbidder.email}</div>
+                                    <div className="font-family_header3 text-lg"> User ID </div>
+                                    <div className="font-family_body2 text-lg">{WS_topbidder._id}</div>
+                                </div>
+                                <div className="flex flex-col text-center">
+                                    <div className="font-family_header3 text-lg"> Email Address </div>
+                                    <div className="font-family_body2 text-lg">{WS_topbidder.email}</div>
                                 </div>
                             </div>
                         </div>
                         :
-                        "There is no Top Bidder yet. Submit your bid to be the first one."
+                        <div className="flex flex-col font-family_body3 justify-center items-center gap-5">
+                            <Image src={emptyBox} width={70} height={70} className="w-[70px] h-[70px]" />
+                            There is no Top Bidder yet. Submit your bid to be the first one.
+                        </div>
                         }
                     </div>
                 </div>
                 <div className="flex flex-col">
                     <div className="text-center font-family_header4 font-bold text-xl mb-1">Bidding Activity</div>
-                    <div className="flex flex-col py-4 px-6 w-[600px] bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg border-x-2 dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">
+                    <div className="flex flex-col py-4 px-6 w-[600px] h-[300px] overflow-y-scroll scrollbar bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg border-x-2 dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">
+                        {WS_activity ?
+                            <div className="flex flex-col gap-2">
+                            {WS_activity.slice().reverse().map(eachActivity => {
+                                return(
+                                    <div className="flex gap-1 items-center" key={eachActivity.timestamp}>
+                                        <div className="font-bold">{convertRawTimeToFormatV3(eachActivity.timestamp)} (HKT)</div>
+                                        <img src={eachActivity.user_data.iconURL} className="w-[55px] h-[55px] mx-2"/>
+                                        <div>{eachActivity.user_data.firstname} {eachActivity.user_data.lastname}</div>
+                                        <div>{eachActivity.action}</div>
+                                        <div>
+                                            {eachActivity.action === "bidded" ? <div className="flex gap-1">at <div className="text-teal-500 font-bold dark:text-cyan-300">${eachActivity.bid_price}</div></div> : `this item`}
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                            </div>
+                        :
+                        ""
+                        }
                     </div>
                 </div>
             </div>
-            {timeDifference(timeLeft)}
             <button onClick={() => console.log(props)}>check props</button>
-            <div>{test2}</div>
-            <input onChange={(e) => {setTest(e.target.value)}}></input>
-            <button onClick={() => handlepost()}>test socket</button>
         </div>
     )
 }
@@ -259,7 +270,8 @@ export async function getServerSideProps(context: any) {
                     timestamp
                     user_data{
                         firstname,
-                        lastname
+                        lastname,
+                        iconURL
                     }
                 },
                 start_time,

@@ -34,7 +34,11 @@ export const convertRawTimeToFormatV2 = (rawtime: number | string) =>{
 
 //For display in My Activity
 export const convertRawTimeToFormatV3 = (rawtime: string) =>{
-    return new Date(rawtime).toISOString().slice(0, 16).replace("T", " ")
+    const rawtime_int = new Date(rawtime).getTime()
+    var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+    var localISOTime = (new Date(rawtime_int - tzoffset)).toISOString().slice(0, -1);
+    
+    return localISOTime.slice(0, 16).replace("T", " ")
 }
 
 //parameter will be recieved as Raw Format
