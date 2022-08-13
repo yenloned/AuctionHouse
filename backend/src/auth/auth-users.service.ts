@@ -8,7 +8,6 @@ import * as bcrypt from 'bcrypt';
 import { salt } from './hashing/salt';
 import { LoginInput } from './inputs/login.input';
 import { JwtService } from '@nestjs/jwt';
-import { v4 as uuidv4 } from "uuid"
 
 @Injectable()
 export class AuthUsersService {
