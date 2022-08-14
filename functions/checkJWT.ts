@@ -1,6 +1,10 @@
 import jwt_decode from "jwt-decode"
 import { decodedJWTType } from "../interface/decodeJWT";
 
+export const getJWT = () => {
+    return typeof window !== 'undefined' ? localStorage.getItem('jwt_token') : null
+}
+
 export const decodeJWT = (token: string) => {
     const decoded: decodedJWTType = jwt_decode(token);
     return decoded

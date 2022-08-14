@@ -33,7 +33,7 @@ This project is still in development, website will be deployed afterward.
 * [Apollo-GraphQL](https://www.apollographql.com/)
 * [Cloudinary](https://cloudinary.com/)
 * [Loadash](https://lodash.com/)
--- (Continue Update)
+* -- (Continue Update)
 
 ## Getting Started
 ```node
@@ -48,7 +48,7 @@ npm start
 Open [http://localhost:3000](http://localhost:3000) and you will see the page appear.
 
 ## Architectures
--- (Continue Update)
+* -- (Continue Update)
 
 ## Design
 * Fully Responsive
@@ -60,19 +60,20 @@ Open [http://localhost:3000](http://localhost:3000) and you will see the page ap
 * Avatar/Icon Upload
 * Bidding Item
 * Create Item
--- (Continue Update)
+* -- (Continue Update)
 
 ## Features
-* Real Time Updating
+* Dark/Light Mode
+* Searching / Categories
+* Recent Activity
 * Image Upload
-* Fast API Request/Response
--- (Continue Update)
+* -- (Continue Update)
 
 ## Preview
--- (Continue Update)
+* -- (Continue Update)
 
 ## Epilogue
--- (Continue Update)
+* -- (Continue Update)
 
 
 

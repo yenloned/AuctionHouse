@@ -10,7 +10,7 @@ import LoadingSpinner from "../../comps/LoadingSpinner"
 import { io, Socket } from "socket.io-client"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
 import { bidItem } from "../../functions/api/bidItem"
-import { getUserIdFromJWT } from "../../functions/checkJWT"
+import { getJWT, getUserIdFromJWT } from "../../functions/checkJWT"
 import { ActivityForWS, marketItemForWS, TopBidderForWS } from "../../interface/websocket"
 
 const ItemInMarket = (props: fetchOneItemType) => {
@@ -30,7 +30,7 @@ const ItemInMarket = (props: fetchOneItemType) => {
 
     useEffect(() => {
         //get userID
-        const jwt_token = typeof window !== 'undefined' ? localStorage.getItem('jwt_token') : null
+        const jwt_token = getJWT()
         setUserToken(jwt_token)
         setUserID(getUserIdFromJWT(jwt_token))
         //create websocket

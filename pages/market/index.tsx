@@ -218,7 +218,7 @@ const Market = (props: fetchAllItemsType) => {
           <div className={activityChoice === "my activity" ? activityChoice_active : activityChoice_inactive} onClick={() => switchActivityChoice("my activity")}>My Activity</div>
         </div>
         <div className="cursor-pointer p-1 px-4 font-family_header2 rounded-lg bg-gradient-to-t from-green-400 via-emerald-200 to-teal-300
-        dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500">Create a Bidding Item</div>
+        dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500" onClick={() => {window.location.replace("/market/create")}}>Create a Bidding Item</div>
       </div>
       <div className="mx-[8vw] h-[180px] mb-5 bg-gradient-to-t from-neutral-200 via-slate-50 to-neutral-100 shadow-lg px-10 border-x-2 py-4 overflow-y-scroll scrollbar
       dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">
