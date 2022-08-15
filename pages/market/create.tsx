@@ -3,15 +3,20 @@ import { PlusIcon, XIcon } from "@heroicons/react/solid";
 import { checkIfJWTexpired, checkJWTandID, getJWT, getUserIdFromJWT } from "../../functions/checkJWT";
 import not_login_block from "../../media/png/not_login_block.png"
 import NextImage from "next/image"
+import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
+import { createItem } from "../../functions/api/createItem";
 
 const Create = () => {
 
     const [isLoggedIn, setIsLoggedIn] = useState(true)
+    const [userID, setUserID] = useState("")
 
     useEffect(() => {
         const jwt_token = getJWT();
         if(checkIfJWTexpired(jwt_token) || !jwt_token || !checkJWTandID(jwt_token, getUserIdFromJWT(jwt_token))){
             setIsLoggedIn(false)
+        }else{
+            setUserID(getUserIdFromJWT(jwt_token))
         }
     }, [])
 
@@ -95,6 +100,26 @@ const Create = () => {
         )
     }
 
+    const create_item = async () => {
+        const input = {
+            name: item_name,
+            description: item_description,
+            owner_id: userID,
+            start_price: item_startprice,
+            per_price: item_perprice,
+            start_time: new Date().toString(),
+            end_time: item_endtime,
+            photo_URL: "https://res.cloudinary.com/auction-house/image/upload/v1658996245/items/pokemoncard_xivkpc.jpg" //temp string
+        }
+        const data = await createItem(input)
+        if(data.props.data.message === ""){
+            //send image into backend
+            //then change photoURL
+        }
+
+        console.log(data)
+    }
+
     return(
         <div className="m-8">
             <div className="flex justify-around my-5">
@@ -156,7 +181,7 @@ const Create = () => {
             </div>
             
             <div className="flex justify-center">
-                <div className="w-32 p-1 mt-3 text-center cursor-pointer rounded-md text-lg bg-gradient-to-t from-emerald-100 via-green-400 to-teal-300 shadow-lg shadow-emerald-300/60 first-letter:dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500 dark:shadow-lg dark:shadow-cyan-500/60" onClick={() => {window.location.replace("/market/create")}}> Create Item </div>
+                <div className="w-32 p-1 mt-3 text-center cursor-pointer rounded-md text-lg bg-gradient-to-t from-emerald-100 via-green-400 to-teal-300 shadow-lg shadow-emerald-300/60 first-letter:dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500 dark:shadow-lg dark:shadow-cyan-500/60" onClick={() => {create_item()}}> Create Item </div>
             </div>
         </div>
     )

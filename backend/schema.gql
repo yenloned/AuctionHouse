@@ -78,8 +78,8 @@ type Query {
 
 type Mutation {
   createUser(input: UserInput!): CreateUserDto!
-  createItem(input: ItemInput!): CreateItemDto!
   bid_item(input: BidItemInput!): BidItemDto!
+  createItem(input: ItemInput!): BidItemDto!
   registerUser(input: RegisterInput!): CreateUserDto!
   loginUser(input: LoginInput!): LoginResponse!
   createGuestUser: String!
@@ -97,6 +97,13 @@ input UserInput {
   biddingItem: [String!]
   winningItem: [String!]
   iconURL: String!
+}
+
+input BidItemInput {
+  item_id: String!
+  userID: String!
+  bid_price: Int!
+  timestamp: String!
 }
 
 input ItemInput {
@@ -119,13 +126,6 @@ input ItemInput {
 `Date` type as integer. Type represents date and time as number of milliseconds from start of UNIX epoch.
 """
 scalar Timestamp
-
-input BidItemInput {
-  item_id: String!
-  userID: String!
-  bid_price: Int!
-  timestamp: String!
-}
 
 input RegisterInput {
   firstname: String!

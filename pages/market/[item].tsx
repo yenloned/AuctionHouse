@@ -125,7 +125,7 @@ const ItemInMarket = (props: fetchOneItemType) => {
                     <div className="flex gap-2 font-family_header2 text-lg">
                         Last Bid Time: <div className="text-cyan-600 dark:text-teal-300">{WS_topbidder?.bidder_time ? WS_topbidder?.bidder_time : "--"}</div>
                     </div>
-                    <div className="font-family_body2 pr-2 mt-4 text-justify h-[240px] overflow-y-scroll scrollbar text-neutral-900 dark:text-slate-100">{props.finalData.description}
+                    <div className="font-family_body2 text-lg pr-2 mt-4 text-justify h-[240px] overflow-y-scroll scrollbar text-neutral-900 dark:text-slate-100">{props.finalData.description}
                     </div>
 
                 </div>

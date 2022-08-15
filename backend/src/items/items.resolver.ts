@@ -26,11 +26,6 @@ export class ItemsResolver {
         return this.itemsService.findAll();
     }
 
-    @Mutation(() => CreateItemDto)
-    async createItem(@Args('input') input: ItemInput){
-        return this.itemsService.create(input);
-    }
-
     @Query(() => [CreateItemDto])
     async findAll_items(){
         return this.itemsService.findAll_item()
@@ -75,7 +70,7 @@ export class ItemsResolver {
     async bid_item(@Args('input') input: BidItemInput){
         const validResult = await this.itemsService.bid_valid(input)
         if(validResult.result){
-            const user_result = await this.itemsService.update_balance(input.item_id, input.userID, input.bid_price)
+            const user_result = await this.itemsService.update_user_afterBid(input.item_id, input.userID, input.bid_price)
             const item_result = await this.itemsService.bid_item(input)
             const activity_input = {
                 user_id: input.userID,
@@ -91,5 +86,30 @@ export class ItemsResolver {
         }else{
             return {message: validResult.message}
         }
+    }
+
+    //@UseGuards(JwtAuthGuard)
+    @Mutation(() => BidItemDto)
+    async createItem(@Args('input') input: ItemInput){
+        const validResult = await this.itemsService.create_valid(input)
+        if(validResult.result){
+            const item_result = await this.itemsService.create_item(input);
+            
+            const activity_input = {
+                user_id: input.owner_id,
+                item_id: item_result._id.toString(),//
+                timestamp: item_result.start_time,
+                sortedTimestamp: null,
+                action: "created",
+                bid_price: null
+            }
+            const activity_result = await this.activityService.create(activity_input)
+            const user_result = await this.itemsService.update_user_afterCreate(input.owner_id, item_result._id.toString())
+            const timestamp = input.start_time
+            return {item_result, user_result, activity_result, timestamp}
+        }else{
+            return {message: validResult.message}
+        }
+        
     }
 }

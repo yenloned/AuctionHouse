@@ -6,7 +6,7 @@ import { User, UserDocument } from 'src/users/users.schema';
 import { UsersService } from 'src/users/users.service';
 import { BidItemInput } from './inputs/bid-item.input';
 import { ItemInput } from './inputs/item.input';
-import { validBid_result } from './interface/valid-bid.interface';
+import { validBid_result, validCreate_result } from './interface/valid-bid.interface';
 import { Item, ItemDocument } from './items.schema';
 
 @Injectable()
@@ -23,11 +23,6 @@ export class ItemsService {
     constructor(
         private usersService: UsersService
     ) {}
-
-    async create(createItemDto: ItemInput): Promise<Item> {
-        const createdItem = new this.itemModel(createItemDto);
-        return createdItem.save();
-    }
 
     async findAll_item(): Promise<Item[]> {
         return this.itemModel.find().exec();
@@ -99,7 +94,8 @@ export class ItemsService {
 
     }
 
-    async update_balance(itemID: string, userID: string, bid: number): Promise<User> {
+    //update balance + biddingItem
+    async update_user_afterBid(itemID: string, userID: string, bid: number): Promise<User> {
         const userData = await this.userModel.findOne({"_id": userID})
         if(userData.biddingItem.includes(itemID)){
             const all_bid = await this.activityModel.find({user_id: userID, item_id: itemID, action: "bidded"})
@@ -111,4 +107,44 @@ export class ItemsService {
         return this.userModel.findByIdAndUpdate(userID, {"$inc": {"balance": -bid}, "$push": {"biddingItem": itemID}})
     }
 
+    async create_valid(input: ItemInput): Promise<validCreate_result> {
+        if(input.description.split(' ').length > 200){
+            return{
+                result: false,
+                message: "Description is too long."
+            }
+        }
+        if(input.start_price < 1000){
+            return{
+                result: false,
+                message: "Starting Price is too low."
+            }
+        }
+        if(input.per_price < 100){
+            return{
+                result: false,
+                message: "Bid Increment Price is too low."
+            }
+        }
+        if(new Date(input.end_time).getTime() <= new Date().getTime() || new Date(input.end_time).getTime() <= new Date(input.start_time).getTime()){
+            return{
+                result: false,
+                message: "Invalid End Time, please try again.."
+            }
+        }
+        return{
+            result: true,
+            message: ""
+        }
+    }
+
+    async create_item(createItemDto: ItemInput): Promise<Item> {
+        const createdItem = new this.itemModel(createItemDto);
+        return createdItem.save();
+    }
+
+    //update currentItem
+    async update_user_afterCreate(itemID: string, userID: string): Promise<User> {
+        return this.userModel.findByIdAndUpdate(userID, {"$push": {"currentItem": itemID}})
+    }
 }
