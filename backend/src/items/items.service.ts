@@ -36,6 +36,10 @@ export class ItemsService {
         }
     }
 
+    async change_photoURL(itemID: string, newURL: string): Promise<Item> {
+        return this.itemModel.findByIdAndUpdate(itemID, {"$set": {"photo_URL": newURL}})
+    }
+
     async findAll(): Promise<Item[]> {
         return this.itemModel.find().exec();
     }

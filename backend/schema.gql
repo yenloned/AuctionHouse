@@ -78,6 +78,7 @@ type Query {
 
 type Mutation {
   createUser(input: UserInput!): CreateUserDto!
+  change_item_photoURL(input: change_item_photoURL!): CreateItemDto!
   bid_item(input: BidItemInput!): BidItemDto!
   createItem(input: ItemInput!): BidItemDto!
   registerUser(input: RegisterInput!): CreateUserDto!
@@ -97,6 +98,11 @@ input UserInput {
   biddingItem: [String!]
   winningItem: [String!]
   iconURL: String!
+}
+
+input change_item_photoURL {
+  id: String!
+  newURL: String!
 }
 
 input BidItemInput {

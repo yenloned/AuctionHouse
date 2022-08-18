@@ -78,9 +78,7 @@ const userPage = () => {
             setImagePending(false);
             return setImageErrorMsg("Invalid File Type. Please try again.")
         }
-        const formData = new FormData();
 
-      formData.append("file", fileInput.files[0])
       const uploadResult = await fetch(`http://localhost:5000/cloudinary/uploadIcon`, {
         method: 'POST',
         body: JSON.stringify({data:imageSrc, public_id: find_profile._id, upload_preset: "auction-house-icons"}),

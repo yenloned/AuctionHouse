@@ -3,11 +3,14 @@ import { PlusIcon, XIcon } from "@heroicons/react/solid";
 import { checkIfJWTexpired, checkJWTandID, getJWT, getUserIdFromJWT } from "../../functions/checkJWT";
 import not_login_block from "../../media/png/not_login_block.png"
 import NextImage from "next/image"
-import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 import { createItem } from "../../functions/api/createItem";
+import { changeItemURL } from "../../functions/api/changeItemURL";
+import { validImageType } from "../../functions/validImageType";
 
 const Create = () => {
 
+    //TODO: websocket
+    
     const [isLoggedIn, setIsLoggedIn] = useState(true)
     const [userID, setUserID] = useState("")
 
@@ -20,6 +23,7 @@ const Create = () => {
         }
     }, [])
 
+    const [uploadEvent, setUploadEvent] = useState<any>()
     const [imageSrc, setImageSrc] = useState<any>();
     const [imageErrorMsg, setImageErrorMsg] = useState("")
     const [uploadData, setUploadData] = useState();
@@ -34,6 +38,7 @@ const Create = () => {
 
     function uploadImgChange(changeEvent: any) {
 
+        setUploadEvent(changeEvent)
         const reader = new FileReader();
         const image: any = new Image();
   
@@ -57,20 +62,16 @@ const Create = () => {
       }
       
       //submit image into Cloudinary after saving item data
-      async function uploadImgSubmit(event: any) {
-          event.preventDefault();
-          const form = event.currentTarget;
-          const fileInput: any = Array.from(form.elements).find(({ name }: any) => name === 'avatar_upload');
-          const jwt_token = localStorage.getItem("jwt_token")
-          if(!(/^image\/.*/.test(fileInput.files[0].type))){
-              return setImageErrorMsg("Invalid File Type. Please try again.")
-          }
-          const formData = new FormData();
-  
-        formData.append("file", fileInput.files[0])
+      async function uploadImgSubmit(event: any, item_id: string) {
+        event.preventDefault();
+        const jwt_token = localStorage.getItem("jwt_token")
+        if(!(/^image\/.*/.test(event.target.files[0].type))){
+            return setImageErrorMsg("Invalid File Type. Please try again.")
+        }
+
         const uploadResult = await fetch(`http://localhost:5000/cloudinary/uploadIcon`, {
           method: 'POST',
-          body: JSON.stringify({data:imageSrc, public_id: "find_profile._id", upload_preset: "auction-house-icons"}),
+          body: JSON.stringify({data:imageSrc, public_id: item_id, upload_preset: "auction-house-items"}),
           headers: {
               'Content-type': 'application/json',
               authorization: jwt_token ? `Bearer ${jwt_token}` : ""
@@ -101,6 +102,9 @@ const Create = () => {
     }
 
     const create_item = async () => {
+        if(!validImageType(uploadEvent)){
+            return setImageErrorMsg("Invalid File Type. Please try again.")
+        }
         const input = {
             name: item_name,
             description: item_description,
@@ -109,15 +113,22 @@ const Create = () => {
             per_price: item_perprice,
             start_time: new Date().toString(),
             end_time: item_endtime,
-            photo_URL: "https://res.cloudinary.com/auction-house/image/upload/v1658996245/items/pokemoncard_xivkpc.jpg" //temp string
+            photo_URL: " " //temp string
         }
         const data = await createItem(input)
-        if(data.props.data.message === ""){
+        
+        const {props} = data
+        if(!props.data.createItem.message){
             //send image into backend
+            uploadImgSubmit(uploadEvent, props.data.createItem.activity_result.item_id)
             //then change photoURL
+            const input = {
+                id: props.data.createItem.activity_result.item_id,
+                newURL: `https://res.cloudinary.com/auction-house/image/upload/v1658996245/items/${props.data.createItem.activity_result.item_id}`
+            }
+            changeItemURL(input)
         }
-
-        console.log(data)
+        //console.log(data)
     }
 
     return(
@@ -126,7 +137,7 @@ const Create = () => {
                 <div className="flex flex-col justify-center items-center">
                     <div className="font-family_header3 text-lg mb-2 ">Upload the Item Image here</div>
                     <div className="w-[500px] h-[420px] border-4 rounded-lg border-dashed">
-                        <form method="post" onChange={uploadImgChange} onSubmit={uploadImgSubmit}>
+                        <form method="post" onChange={uploadImgChange}>
                             {uploadData?
                             <div className="flex h-[400px] justify-center items-center text-center">
                                 <img className="w-[380px] h-[350px]" width="128" height="128" src={imageSrc}/>
@@ -180,8 +191,14 @@ const Create = () => {
                 </div>
             </div>
             
-            <div className="flex justify-center">
+            <div className="flex justify-center my-2">
                 <div className="w-32 p-1 mt-3 text-center cursor-pointer rounded-md text-lg bg-gradient-to-t from-emerald-100 via-green-400 to-teal-300 shadow-lg shadow-emerald-300/60 first-letter:dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500 dark:shadow-lg dark:shadow-cyan-500/60" onClick={() => {create_item()}}> Create Item </div>
+            </div>
+
+            <div className="flex justify-center my-2">
+                <div className="text-red-500">
+                    {imageErrorMsg}
+                </div>
             </div>
         </div>
     )

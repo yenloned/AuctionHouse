@@ -12,6 +12,7 @@ import { UseGuards } from '@nestjs/common';
 import { BidItemDto } from './dto/bid-dto';
 import { ActivityService } from 'src/activity/activity.service';
 import { CreateActivityDto } from 'src/activity/dto/create-activity.dto';
+import { change_item_photoURL } from './dto/change-items.dto';
 
 @Resolver(() => CreateItemDto)
 export class ItemsResolver {
@@ -29,6 +30,13 @@ export class ItemsResolver {
     @Query(() => [CreateItemDto])
     async findAll_items(){
         return this.itemsService.findAll_item()
+    }
+
+    @Mutation(() => CreateItemDto)
+    async change_item_photoURL(@Args('input') input: change_item_photoURL){
+        const {id} = input;
+        const {newURL} = input;
+        return this.itemsService.change_photoURL(id, newURL)
     }
 
     @Query(() => CreateItemDto)

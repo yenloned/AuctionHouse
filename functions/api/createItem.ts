@@ -21,6 +21,9 @@ export const createItem = async (input: CreateItemType) => {
                     end_time: "${input.end_time}",
                     photo_URL: "${input.photo_URL}"
                 }){
+                    activity_result{
+                        item_id
+                    },
                     message
                 }
             }`

@@ -14,3 +14,8 @@ export type CreateItemType = {
     end_time: string,
     photo_URL: string
 }
+
+export type ChangeItemURLType = {
+    id: string,
+    newURL: string
+}
