@@ -6,13 +6,38 @@ import NextImage from "next/image"
 import { createItem } from "../../functions/api/createItem";
 import { changeItemURL } from "../../functions/api/changeItemURL";
 import { validImageType } from "../../functions/validImageType";
+import { io, Socket } from "socket.io-client";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import { ActivityForLobbyWS, marketLobbyForWS } from "../../interface/websocket";
+import LoadingSpinner from "../../comps/LoadingSpinner";
 
 const Create = () => {
 
-    //TODO: websocket
-    
+    //socketio
+    const [websocket, setWebsocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap>>()
+    useEffect(() => {
+        const socket = io("http://localhost:6001", {transports: ['websocket']})
+        setWebsocket(socket)
+    },[])
+
+    const WS_createItem = (user_icon: string, user_firstname: string, user_lastname: string, item_id: string, item_photo: string, item_name: string, timestamp: string) => {
+        const createItemDto = {
+            user_icon: user_icon,
+            user_firstname: user_firstname,
+            user_lastname: user_lastname,
+            item_id: item_id,
+            item_icon: item_photo,
+            item_name: item_name,
+            timestamp: timestamp
+        }
+        websocket?.emit('create_item', createItemDto)
+    }
+
+
     const [isLoggedIn, setIsLoggedIn] = useState(true)
     const [userID, setUserID] = useState("")
+    const [createdItem, setCreatedItem] = useState(false)
+    const [clickedCreate, setClickedCreate] = useState(false)
 
     useEffect(() => {
         const jwt_token = getJWT();
@@ -33,6 +58,8 @@ const Create = () => {
     const [item_startprice, setItem_startprice] = useState(0);
     const [item_perprice, setItem_perprice] = useState(0);
     const [item_endtime, setItem_endtime] = useState("");
+    const [item_newURL, setItem_newURL] = useState("")
+    const [item_id, setItem_id] = useState("")
 
 
 
@@ -77,11 +104,10 @@ const Create = () => {
               authorization: jwt_token ? `Bearer ${jwt_token}` : ""
           }
         }).then(r => r.json());
-    
         if(uploadResult.secure_url){
-          setImageSrc(uploadResult.secure_url);
-          setUploadData(uploadResult);
+            return uploadResult.secure_url
         }
+        
       }
 
     if(!isLoggedIn){
@@ -115,20 +141,57 @@ const Create = () => {
             end_time: item_endtime,
             photo_URL: " " //temp string
         }
-        const data = await createItem(input)
-        
-        const {props} = data
-        if(!props.data.createItem.message){
-            //send image into backend
-            uploadImgSubmit(uploadEvent, props.data.createItem.activity_result.item_id)
-            //then change photoURL
-            const input = {
-                id: props.data.createItem.activity_result.item_id,
-                newURL: `https://res.cloudinary.com/auction-house/image/upload/v1658996245/items/${props.data.createItem.activity_result.item_id}`
+        try{
+            const data = await createItem(input)
+            const {props} = data
+            if(!props.data.createItem.message){
+                setClickedCreate(true)
+                //send image into backend
+                const newURL = await uploadImgSubmit(uploadEvent, props.data.createItem.activity_result.item_id)
+                setItem_newURL(newURL)
+                //then change photoURL
+                const input = {
+                    id: props.data.createItem.activity_result.item_id,
+                    newURL: newURL
+                }
+                changeItemURL(input)
+                const user_icon = props.data.createItem.activity_result.user_data.iconURL
+                const user_firstname = props.data.createItem.activity_result.user_data.firstname
+                const user_lastname = props.data.createItem.activity_result.user_data.lastname
+                const item_id = props.data.createItem.activity_result.item_id
+                const timestamp = props.data.createItem.activity_result.timestamp
+                WS_createItem(user_icon, user_firstname, user_lastname, item_id, newURL, item_name, timestamp)
+                setItem_id(item_id)
+            }else{
+                return setImageErrorMsg(props.data.createItem.message)
             }
-            changeItemURL(input)
+        }catch(e){
+            return setImageErrorMsg("Account expired.")
         }
-        //console.log(data)
+        
+        setCreatedItem(true)
+        setClickedCreate(false)
+    }
+
+    if(clickedCreate && !createdItem){
+        return <LoadingSpinner/>
+    }
+
+    if(createdItem){
+        return (
+            <div className="flex flex-col justify-center items-center gap-3">
+                <img src={item_newURL} className="w-[350px] h-[350px]"/>
+                <div className="font-family_header2 text-xl">
+                    Item has been created successfully.
+                </div>
+                <button className="text-center px-2 rounded-md font-family_header3 text-lg bg-gradient-to-t from-green-400 via-emerald-200 to-teal-300 dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500" onClick={() => window.location.replace(`/market/${item_id}`)}>
+                    Go check the detail
+                </button>
+                <button className="text-center px-2 rounded-md font-family_header3 text-lg bg-gradient-to-t from-green-400 via-emerald-200 to-teal-300 dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500" onClick={() => window.location.replace(`/market/create`)}>
+                    Create another Item
+                </button>
+            </div>
+        )
     }
 
     return(

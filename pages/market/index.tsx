@@ -94,6 +94,7 @@ const Market = (props: fetchAllItemsType) => {
   },[])
 
   websocket?.on("market_lobbyUpdate", (WS_newRecentActivity: marketLobbyForWS) => {
+    console.log(WS_newRecentActivity)
     const {bidderActivity} = WS_newRecentActivity
     const {itemData} = WS_newRecentActivity
     if(WS_recentActivity){

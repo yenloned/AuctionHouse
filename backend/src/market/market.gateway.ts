@@ -3,6 +3,7 @@ import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSo
 import { Server, Socket } from "socket.io"
 import { BidItemInput } from "src/items/inputs/bid-item.input";
 import { WS_BidItemDto } from "./interfaces/bidItemDto";
+import { WS_CreateItemDto } from "./interfaces/createItemDto";
 import { CreateMessageInput, JoinRoomInput } from "./interfaces/createMessageDto";
 import { MarketService } from "./market.service";
 @WebSocketGateway(6001, {
@@ -61,5 +62,24 @@ export class MarketGateway{
         }
         this.server.emit("market_lobbyUpdate", {itemData, bidderActivity})
         this.server.to(bidItemDto.item_id).emit("bid_update", {topBidder, bidderActivity})
+    }
+
+    @SubscribeMessage('create_item')
+    async create_item(@MessageBody() createItemDto: WS_CreateItemDto){
+        const bidderActivity = {
+            action: "created",
+            timestamp: createItemDto.timestamp,
+            user_data: {
+                firstname: createItemDto.user_firstname,
+                lastname: createItemDto.user_lastname,
+                iconURL: createItemDto.user_icon
+            }
+        }
+        const itemData = {
+            item_id: createItemDto.item_id,
+            item_name: createItemDto.item_name,
+            item_iconURL: createItemDto.item_icon
+        }
+        this.server.emit("market_lobbyUpdate", {itemData, bidderActivity})
     }
 }

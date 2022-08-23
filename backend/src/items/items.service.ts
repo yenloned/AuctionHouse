@@ -8,6 +8,7 @@ import { BidItemInput } from './inputs/bid-item.input';
 import { ItemInput } from './inputs/item.input';
 import { validBid_result, validCreate_result } from './interface/valid-bid.interface';
 import { Item, ItemDocument } from './items.schema';
+import _ from "lodash"
 
 @Injectable()
 export class ItemsService {
@@ -112,6 +113,12 @@ export class ItemsService {
     }
 
     async create_valid(input: ItemInput): Promise<validCreate_result> {
+        if(!input.description || !input.start_price || !input.per_price || input.end_time == "Invalid Date"){
+            return{
+                result: false,
+                message: "Missing Input field, please try again."
+            }
+        }
         if(input.description.split(' ').length > 200){
             return{
                 result: false,
@@ -133,7 +140,7 @@ export class ItemsService {
         if(new Date(input.end_time).getTime() <= new Date().getTime() || new Date(input.end_time).getTime() <= new Date(input.start_time).getTime()){
             return{
                 result: false,
-                message: "Invalid End Time, please try again.."
+                message: "Invalid End Time, please try again."
             }
         }
         return{
@@ -149,6 +156,7 @@ export class ItemsService {
 
     //update currentItem
     async update_user_afterCreate(itemID: string, userID: string): Promise<User> {
-        return this.userModel.findByIdAndUpdate(userID, {"$push": {"currentItem": itemID}})
+        return this.userModel.findOneAndUpdate({_id: userID}, {$push: {"currentItem": itemID}},
+        {new : true})
     }
 }

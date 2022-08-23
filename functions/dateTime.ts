@@ -36,7 +36,7 @@ export const convertRawTimeToFormatV2 = (rawtime: number | string) =>{
 export const convertRawTimeToFormatV3 = (rawtime: string) =>{
     const rawtime_int = new Date(rawtime).getTime()
     var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-    var localISOTime = (new Date(rawtime_int - tzoffset)).toISOString().slice(0, -1);
+    var localISOTime = (new Date(rawtime_int - tzoffset)).toString().slice(0, -1);
     
     return localISOTime.slice(0, 16).replace("T", " ")
 }
