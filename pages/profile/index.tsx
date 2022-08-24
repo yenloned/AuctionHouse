@@ -3,6 +3,7 @@ import { useState } from "react"
 import useSWR from "swr"
 import { UploadIcon } from "@heroicons/react/solid"
 import LoadingSpinner from "../../comps/LoadingSpinner"
+import { currentItemType } from "../../interface/userProfile"
 
 const fetcher = async () =>{
     const jwt_token = typeof window !== 'undefined' ? localStorage.getItem('jwt_token') : null
@@ -24,7 +25,21 @@ const fetcher = async () =>{
             lastname
             balance
             currentItem
+            currentItem_data{
+                _id
+                name
+                start_price
+                current_price
+                photo_URL
+            }
             biddingItem
+            biddingItem_data{
+                _id
+                name
+                start_price
+                current_price
+                photo_URL
+            }
             winningItem
             iconURL
             }
@@ -139,17 +154,46 @@ const userPage = () => {
                 <div className="basis-1/2 text-lg py-8 rounded-xl bg-gray-100 shadow-xl
                 dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">{find_profile.balance}</div>
             </div>
-            <div className="text-lg py-10 min-h-[180px] rounded-xl bg-gray-100 shadow-xl font-family_header1
+            <div className="text-lg py-5 min-h-[180px] rounded-xl bg-gray-100 shadow-xl font-family_header1
             dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">
-                {find_profile.currentItem.length ? "there is" : "You have no Items on Bid currently"}
+                {find_profile.currentItem_data?.length ?
+                <div className="text-center">
+                    <div className="mb-2">
+                        Current Item
+                    </div>
+                    <div className="flex mx-10 gap-10 overflow-x-scroll scrollbar">
+                        {find_profile.currentItem_data.map((eachCurrentItem: currentItemType) => {
+                            return(
+                                <div className="flex flex-col cursor-pointer p-4 shadow-xl bg-stone-200 dark:bg-stone-900" onClick={() => {window.location.replace(`/market/${eachCurrentItem._id}`)}}>
+                                    <img src={eachCurrentItem.photo_URL} className="w-[150px] h-[140px]"></img>
+                                    <div className="text-ellipsis overflow-hidden w-[140px] hover:text-sky-500 hover:dark:text-sky-300">{eachCurrentItem.name}</div>
+                                    <div className="font-family_body2 font-bold text-teal-400 dark:text-sky-400">$ {eachCurrentItem.current_price ? eachCurrentItem.current_price : eachCurrentItem.start_price}</div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
+                : "You have no Items on Bid currently"}
             </div>
             <div className="text-lg py-10 min-h-[180px] rounded-xl bg-gray-100 shadow-xl font-family_header1
             dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">
-                {find_profile.currentItem.length ? "there is" : "You have no Bidding Items currently"}
+                {find_profile.biddingItem.length ? <div className="text-center">
+                    <div className="mb-2">
+                        Bidding Item
+                    </div>
+                    <div className="flex mx-10 gap-10 overflow-x-scroll scrollbar">
+                        {find_profile.biddingItem_data.map((eachCurrentItem: currentItemType) => {
+                            return(
+                                <div className="flex flex-col cursor-pointer p-4 shadow-xl bg-stone-200 dark:bg-stone-900" onClick={() => {window.location.replace(`/market/${eachCurrentItem._id}`)}}>
+                                    <img src={eachCurrentItem.photo_URL} className="w-[150px] h-[140px]"></img>
+                                    <div className="text-ellipsis overflow-hidden w-[140px] hover:text-sky-500 hover:dark:text-sky-300">{eachCurrentItem.name}</div>
+                                    <div className="font-family_body2 font-bold text-teal-400 dark:text-sky-400">$ {eachCurrentItem.current_price}</div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div> : "You have no Bidding Items currently"}
             </div>
-            <div className="text-lg py-10 min-h-[180px] rounded-xl bg-gray-100 shadow-xl font-family_header1
-            dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">
-                {find_profile.currentItem.length ? "there is" : "You have no Winning Items"}</div>
         </div>
     )
 }

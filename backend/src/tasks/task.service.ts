@@ -5,6 +5,7 @@ import { Model } from 'mongoose';
 import { Activity, ActivityDocument } from 'src/activity/activity.schema';
 import { Item, ItemDocument } from 'src/items/items.schema';
 import { ItemsService } from 'src/items/items.service';
+import { User, UserDocument } from 'src/users/users.schema';
 
 @Injectable()
 export class TasksService {
@@ -12,6 +13,9 @@ export class TasksService {
 
   @InjectModel(Item.name)
   private itemModel: Model<ItemDocument>
+
+  @InjectModel(User.name)
+  private userModel: Model<UserDocument>
 
   @InjectModel(Activity.name)
   private activityModel: Model<ActivityDocument>

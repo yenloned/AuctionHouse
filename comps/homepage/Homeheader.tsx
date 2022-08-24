@@ -3,12 +3,12 @@ import Auction from "../../media/png/auction.png"
 
 export const Homeheader = () => {
     return (
-      <div className="dark:bg-gray-900 min-h-[680px] flex items-center justify-evenly">
+      <div className="dark:bg-gray-900 min-h-[680px] flex flex-col-reverse items-center p-4 justify-evenly lg:flex-row sm:p-0">
         <div className="">
-          <div className="text-black dark:text-white text-4xl font-family_header1">
+          <div className="text-black dark:text-white text-2xl font-family_header1 lg:text-4xl">
             Auction House
           </div>
-          <div className="text-stone-900 dark:text-zinc-50 text-xl font-family_body3">
+          <div className="text-stone-900 dark:text-zinc-50 text-lg font-family_body3 lg:text-xl">
             Your Real Time Mock Bidding Platform. Start off with $1,000,000 with any new account right now!
           </div>
           <div className="text-stone-400 dark:text-zinc-500 text-lg font-family_body2">
@@ -25,7 +25,7 @@ export const Homeheader = () => {
             </div>
           </div>
         </div>
-        <div className="static"><Image src={Auction} width={380} height={380} className="static" /></div>
+        <div className="static px-3 pt-3 lg:p-0"><Image src={Auction} width={380} height={380} className="static" /></div>
       </div>
     )
 }

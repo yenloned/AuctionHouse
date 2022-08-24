@@ -7,6 +7,7 @@ import type { AppProps } from 'next/app'
 import Layout from '../comps/Layout'
 import Head from 'next/head'
 import { LoginStatusContextProvider } from '../context/userLogin'
+import LoadingSpinner from '../comps/LoadingSpinner'
 
 function MyApp({ Component, pageProps }: AppProps) {
 

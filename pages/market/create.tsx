@@ -8,7 +8,6 @@ import { changeItemURL } from "../../functions/api/changeItemURL";
 import { validImageType } from "../../functions/validImageType";
 import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import { ActivityForLobbyWS, marketLobbyForWS } from "../../interface/websocket";
 import LoadingSpinner from "../../comps/LoadingSpinner";
 
 const Create = () => {
@@ -179,7 +178,7 @@ const Create = () => {
 
     if(createdItem){
         return (
-            <div className="flex flex-col justify-center items-center gap-3">
+            <div className="flex flex-col justify-center items-center gap-3 mt-3">
                 <img src={item_newURL} className="w-[350px] h-[350px]"/>
                 <div className="font-family_header2 text-xl">
                     Item has been created successfully.

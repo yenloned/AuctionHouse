@@ -2,19 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type CreateUserDto {
-  _id: String!
-  firstname: String!
-  lastname: String!
-  email: String!
-  password: String!
-  balance: Int!
-  currentItem: [String!]
-  biddingItem: [String!]
-  winningItem: [String!]
-  iconURL: String!
-}
-
 type CreateActivityDto {
   _id: ID!
   action: String!
@@ -47,6 +34,21 @@ type CreateItemDto {
   photo_URL: String!
   user_data: CreateUserDto!
   item_data: CreateItemDto!
+}
+
+type CreateUserDto {
+  _id: String!
+  firstname: String!
+  lastname: String!
+  email: String!
+  password: String!
+  balance: Int!
+  currentItem: [String!]
+  currentItem_data: [CreateItemDto!]
+  biddingItem: [String!]
+  biddingItem_data: [CreateItemDto!]
+  winningItem: [String!]
+  iconURL: String!
 }
 
 type BidItemDto {

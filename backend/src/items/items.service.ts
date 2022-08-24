@@ -31,10 +31,15 @@ export class ItemsService {
 
     async findOne_item(itemID: string): Promise<Item> {
         try{
-            return this.itemModel.findOne({"_id": itemID});
+            const item_result = await this.itemModel.findOne({"_id": itemID})
+            return item_result
         }catch(e){
             return e;
         }
+    }
+
+    async findMany_byList(list: string[]): Promise<Item[]> {
+        return this.itemModel.find({"_id": {$in: list}})
     }
 
     async change_photoURL(itemID: string, newURL: string): Promise<Item> {
@@ -155,8 +160,7 @@ export class ItemsService {
     }
 
     //update currentItem
-    async update_user_afterCreate(itemID: string, userID: string): Promise<User> {
-        return this.userModel.findOneAndUpdate({_id: userID}, {$push: {"currentItem": itemID}},
-        {new : true})
+    async update_user_afterCreate(userID: string, itemID: string): Promise<User> {
+        return this.userModel.findOneAndUpdate({"_id": userID}, {$push: {"currentItem": itemID}})
     }
 }

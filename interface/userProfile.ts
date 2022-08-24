@@ -13,3 +13,11 @@ export type userDataForNavbar = {
     userIcon: string;
     userBalance: number;
 }
+
+export type currentItemType = {
+    _id: string;
+    name: string;
+    start_price: string;
+    current_price: string;
+    photo_URL: string;
+}

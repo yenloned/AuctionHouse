@@ -2,6 +2,7 @@ import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
 import { fetchOneItemType } from "../../interface/marketFetching"
 import Image from "next/image"
 import emptyBox from "../../media/png/emptyBox.png"
+import expired from "../../media/png/expired.png"
 import _ from "lodash"
 import { useEffect, useState } from "react"
 import { convertItemTimestamp, convertRawTimeToFormat, convertRawTimeToFormatV3, secondsDifference, timeDifference } from "../../functions/dateTime"
@@ -14,6 +15,20 @@ import { getJWT, getUserIdFromJWT } from "../../functions/checkJWT"
 import { ActivityForWS, marketItemForWS, TopBidderForWS } from "../../interface/websocket"
 
 const ItemInMarket = (props: fetchOneItemType) => {
+    if(_.isEmpty(props)){
+        return(
+            <div className="flex flex-col justify-center items-center h-[80vh] gap-3">
+                <Image src={expired} width={300} height={300} className="w-[70px] h-[70px]" />
+                <div className="font-family_header3 text-xl">
+                    Fail to fetch data. This item might be outdated or not existed.
+                </div>
+                <button className="text-center px-2 rounded-md font-family_header3 text-lg bg-gradient-to-t from-green-400 via-emerald-200 to-teal-300 dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500" onClick={() => window.location.replace(`/market`)}>
+                    Go Back to Market
+                </button>
+            </div>
+        )
+    }
+
     const [timeLeft, setTimeLeft] = useState(0)
     const [bidAmount, setBidAmount] = useState(props.finalData.current_price ? props.finalData.current_price + props.finalData.per_price : props.finalData.start_price + props.finalData.per_price)
     const [userID, setUserID] = useState("")
@@ -46,14 +61,6 @@ const ItemInMarket = (props: fetchOneItemType) => {
             setTimeLeft(secondsDifference(new Date().getTime(), parseInt(end_time)))
         }, 1000)
     })
-
-    if(_.isEmpty(props)){
-        return(
-            <div>
-                Fail to fetch data. This item might be outdated or not existed.
-            </div>
-        )
-    }
 
     //socketio listen all bid submit
     websocket?.on('bid_update', (WS_bidItem: marketItemForWS) =>{
@@ -155,18 +162,30 @@ const ItemInMarket = (props: fetchOneItemType) => {
             <div className="text-center my-4">
                 <div className="font-family_header4 text-xl font-bold">Bidding Time Left</div>
                 <div className="font-family_body3 text-xl">
-                    <div className={timeDifference(timeLeft).match(/.*hour*/) ? "text-amber-400" : timeDifference(timeLeft).match(/.*second*/) ? "text-red-600 dark:text-red-500" : "font-bold text-teal-500 dark:text-cyan-400"}>{timeDifference(timeLeft)}
-                    </div>
+                    {parseInt(props.finalData.end_time) >= new Date().getTime() ?
+                        <div className={timeDifference(timeLeft).match(/.*hour*/) ? "text-amber-400" : timeDifference(timeLeft).match(/.*second*/) ? "text-red-600 dark:text-red-500" : "font-bold text-teal-500 dark:text-cyan-400"}>{timeDifference(timeLeft)}
+                        </div>
+                    :
+                        <div className="text-red-600 dark:text-red-500">
+                            --Expired--
+                        </div>
+                    }
                 </div>
             </div>
 
             <div className="text-center my-4">
-                <div className="font-family_header4 text-xl font-bold">Bid Amount</div>
-                <div>
-                    <input type="number" min={props.finalData.current_price ? props.finalData.current_price + props.finalData.per_price : props.finalData.start_price + props.finalData.per_price} value={bidAmount} step={props.finalData.per_price} className="text-center input_hiddenarrow font-familt_body3 text-lg rounded-md bg-gray-200 dark:bg-slate-800" onChange={(e) => {setBidAmount(parseInt(e.target.value))}}/>
-                </div>
-                <button className="px-2 mt-2 rounded-md font-family_header3 text-lg bg-gradient-to-t from-green-400 via-emerald-200 to-teal-300 dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500" onClick={() => submit_bid(userID, props.finalData._id, bidAmount, userToken)}>Confirm</button>
-                <div className="text-red-500">{bidErrorMsg}</div>
+                {parseInt(props.finalData.end_time) >= new Date().getTime() ?
+                    <div>
+                        <div className="font-family_header4 text-xl font-bold">Bid Amount</div>
+                        <div>
+                            <input type="number" min={props.finalData.current_price ? props.finalData.current_price + props.finalData.per_price : props.finalData.start_price + props.finalData.per_price} value={bidAmount} step={props.finalData.per_price} className="text-center input_hiddenarrow font-familt_body3 text-lg rounded-md bg-gray-200 dark:bg-slate-800" onChange={(e) => {setBidAmount(parseInt(e.target.value))}}/>
+                        </div>
+                        <button className="px-2 mt-2 rounded-md font-family_header3 text-lg bg-gradient-to-t from-green-400 via-emerald-200 to-teal-300 dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500" onClick={() => submit_bid(userID, props.finalData._id, bidAmount, userToken)}>Confirm</button>
+                        <div className="text-red-500">{bidErrorMsg}</div>
+                    </div>
+                    :
+                    ""
+                }
             </div>
 
             <div className="flex justify-center gap-5 my-8">
@@ -224,7 +243,6 @@ const ItemInMarket = (props: fetchOneItemType) => {
                     </div>
                 </div>
             </div>
-            <button onClick={() => console.log(props)}>check props</button>
         </div>
     )
 }
@@ -290,7 +308,8 @@ export async function getServerSideProps(context: any) {
         }
     }catch(e){
         return {
-            props:{}
+            props: {
+            }
         }
     }
 }

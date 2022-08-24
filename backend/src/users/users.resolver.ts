@@ -6,11 +6,14 @@ import { JwtDecodeDto } from "./dto/jwt-decode.dto";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { UseGuards } from "@nestjs/common";
 import { StringDecoder } from "string_decoder";
+import { CreateItemDto } from "src/items/dto/create-items.dto";
+import { ItemsService } from "src/items/items.service";
 
 @Resolver(() => CreateUserDto)
 export class UsersResolver {
     constructor(
-    private usersService: UsersService
+    private usersService: UsersService,
+    private itemsService: ItemsService
     ){}
 
     @Query(() => String)
@@ -33,6 +36,16 @@ export class UsersResolver {
     async find_profile(@Args('input') jwt_token: string){
         const userId = await this.usersService.findProfile(jwt_token);
         return this.usersService.findOne(userId);
+    }
+    @ResolveField(() => CreateItemDto)
+    async currentItem_data(@Parent() userDto: CreateUserDto){
+        const { currentItem } = userDto;
+        return this.itemsService.findMany_byList(currentItem)
+    }
+    @ResolveField(() => CreateItemDto)
+    async biddingItem_data(@Parent() userDto: CreateUserDto){
+        const { biddingItem } = userDto;
+        return this.itemsService.findMany_byList(biddingItem)
     }
 
     @Mutation(() => CreateUserDto)

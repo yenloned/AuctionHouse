@@ -1,4 +1,5 @@
 import { Int, Field, ObjectType, ID } from "@nestjs/graphql";
+import { CreateItemDto } from "src/items/dto/create-items.dto";
 
 @ObjectType()
 export class CreateUserDto {
@@ -16,8 +17,12 @@ export class CreateUserDto {
   readonly balance: number;
   @Field(() => [String], { nullable: true })
   readonly currentItem?: string[];
+  @Field(() => [CreateItemDto], { nullable: true })
+  readonly currentItem_data?: CreateItemDto[];
   @Field(() => [String], { nullable: true })
   readonly biddingItem?: string[];
+  @Field(() => [CreateItemDto], { nullable: true })
+  readonly biddingItem_data?: CreateItemDto[];
   @Field(() => [String], { nullable: true })
   readonly winningItem?: string[];
   @Field()

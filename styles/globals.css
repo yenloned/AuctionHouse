@@ -16,7 +16,8 @@
 
 @layer utilities {
   .scrollbar::-webkit-scrollbar {
-    width: 6px;
+    max-width: 6px;
+    max-height: 6px;
   }
 
   .scrollbar::-webkit-scrollbar-track {
@@ -41,4 +42,40 @@
   .input_hiddenarrow[type=number]{
     -moz-appearance: textfield;
   }
+}
+
+html,body{
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    padding: 0px;
+    overflow-x: hidden;
+}
+
+body::-webkit-scrollbar {
+  max-width: 6px;
+  max-height: 6px;
+}
+
+body::-webkit-scrollbar-track {
+  border-radius: 100vh;
+  background: hidden;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: rgb(180, 180, 180);
+  border-radius: 100vh;
+}
+
+body::-webkit-scrollbar-thumb:hover{
+  background: rgb(0,0,0);
+}
+
+.input_hiddenarrow::-webkit-outer-spin-button, .input_hiddenarrow::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input_hiddenarrow[type=number]{
+  -moz-appearance: textfield;
 }

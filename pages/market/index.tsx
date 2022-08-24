@@ -388,8 +388,6 @@ const Market = (props: fetchAllItemsType) => {
         })}
         <ChevronRightIcon className="cursor-pointer w-6 h-8" onClick={currentPage === totalMaxPages ? () => {} : () => nextPage(currentPage)} />
       </div>
-      <button onClick={() => {console.log(props?.defaultSortedItems)}}>check props</button><br/>
-      <button onClick={() => {console.log(sortedItems)}}>check sortedProps</button>
 
     </div>
   )
