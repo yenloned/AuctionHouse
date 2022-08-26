@@ -3,7 +3,7 @@ import Login from "../../media/svg/home_login.svg"
 
 export const LoginYourAccount = () => {
     return (
-        <div className="bg-stone-100 dark:bg-slate-800 min-h-[600px] flex flex-col p-4 items-center justify-center gap-[10vw] lg:flex-row lg:p-0">
+        <div className="bg-slate-200 dark:bg-slate-800 min-h-[600px] flex flex-col p-4 items-center justify-center gap-[10vw] lg:flex-row lg:p-0">
             <Image src={Login} width={400} height={400} className=""/>
             <div className="max-w-[500px] min-h-[200px]">
             <div className="text-black dark:text-zinc-50 text-2xl font-family_header2 lg:text-4xl">

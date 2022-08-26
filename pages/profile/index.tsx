@@ -119,10 +119,10 @@ const userPage = () => {
 
     return(
         <div className="flex flex-col m-8 ml-[10vw] mr-[10vw] gap-5 text-center">
-            <div className="flex flex-row min-h-[180px] gap-5">
+            <div className="flex flex-col min-h-[180px] gap-5 md:flex-row">
                 <div className="basis-1/2 text-lg py-8 rounded-xl bg-gray-100 shadow-xl
                 dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">
-                    <div className="flex flex-row justify-evenly">
+                    <div className="flex flex-col items-center justify-evenly md:flex-row">
                         <div>
                         <form method="post" onChange={uploadImgChange} onSubmit={uploadImgSubmit}>
                             <img className="w-[128px] h-[128px]" width="128" height="128" src={!uploadData ? find_profile.iconURL : imageSrc}/>

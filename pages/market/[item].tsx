@@ -114,7 +114,7 @@ const ItemInMarket = (props: fetchOneItemType) => {
     }
     return(
         <div className="bg-neutral-50 dark:bg-gray-900 h-auto my-auto pt-10">
-            <div className="flex justify-evenly gap-5">
+            <div className="flex flex-col items-center justify-evenly gap-5 lg:flex-row">
                 <img src={props.finalData.photo_URL} className="w-[400px] h-[400px]"/>
                 <div className="flex flex-col max-w-[750px]">
                     <div className="font-family_header3 text-2xl">
@@ -132,13 +132,13 @@ const ItemInMarket = (props: fetchOneItemType) => {
                     <div className="flex gap-2 font-family_header2 text-lg">
                         Last Bid Time: <div className="text-cyan-600 dark:text-teal-300">{WS_topbidder?.bidder_time ? WS_topbidder?.bidder_time : "--"}</div>
                     </div>
-                    <div className="font-family_body2 text-lg pr-2 mt-4 text-justify h-[240px] overflow-y-scroll scrollbar text-neutral-900 dark:text-slate-100">{props.finalData.description}
+                    <div className="font-family_body2 text-lg pr-2 mt-4 text-justify h-[120px] overflow-y-scroll scrollbar text-neutral-900 dark:text-slate-100 md:h-[240px]">{props.finalData.description}
                     </div>
 
                 </div>
             </div>
 
-            <div className="flex justify-evenly text-center my-8">
+            <div className="flex flex-col items-center justify-evenly text-center my-8 sm:flex-row">
                 <div className="flex flex-col w-[200px]">
                     <div className="font-family_header4 text-xl font-bold">Start Price</div>
                     <div className="font-family_header3 text-xl text-cyan-600 dark:text-cyan-300">
@@ -188,10 +188,10 @@ const ItemInMarket = (props: fetchOneItemType) => {
                 }
             </div>
 
-            <div className="flex justify-center gap-5 my-8">
+            <div className="flex flex-col items-center justify-center gap-5 my-8 lg:flex">
                 <div className="flex flex-col">
                     <div className="text-center font-family_header4 font-bold text-xl mb-1">Top Bidder</div>
-                    <div className="flex py-4 px-6 w-[600px] h-[300px] justify-center items-center bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg border-x-2 dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">
+                    <div className="flex py-4 px-6 w-[350px] h-[300px] justify-center items-center bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg border-x-2 dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900 md:w-[600px]">
                         {WS_topbidder?.bidder_time ?
                         <div className="flex gap-5">
                             <img src={WS_topbidder.iconURL} className="w-[180px] h-[180px]"/>
@@ -220,7 +220,7 @@ const ItemInMarket = (props: fetchOneItemType) => {
                 </div>
                 <div className="flex flex-col">
                     <div className="text-center font-family_header4 font-bold text-xl mb-1">Bidding Activity</div>
-                    <div className="flex flex-col py-4 px-6 w-[600px] h-[300px] overflow-y-scroll scrollbar bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg border-x-2 dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">
+                    <div className="flex flex-col py-4 px-6 w-[350px] h-[300px] overflow-y-scroll scrollbar bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg border-x-2 dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900 md:w-[600px]">
                         {WS_activity ?
                             <div className="flex flex-col gap-2">
                             {WS_activity.slice().reverse().map(eachActivity => {

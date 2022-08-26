@@ -195,18 +195,18 @@ const Create = () => {
 
     return(
         <div className="m-8">
-            <div className="flex justify-around my-5">
+            <div className="flex flex-col items-center justify-around my-5 lg:flex-row">
                 <div className="flex flex-col justify-center items-center">
                     <div className="font-family_header3 text-lg mb-2 ">Upload the Item Image here</div>
-                    <div className="w-[500px] h-[420px] border-4 rounded-lg border-dashed">
+                    <div className="w-[320px] h-[300px] border-4 rounded-lg border-dashed md:w-[500px] md:h-[420px]">
                         <form method="post" onChange={uploadImgChange}>
                             {uploadData?
-                            <div className="flex h-[400px] justify-center items-center text-center">
-                                <img className="w-[380px] h-[350px]" width="128" height="128" src={imageSrc}/>
+                            <div className="flex h-[300px] justify-center items-center text-center md:h-[400px]">
+                                <img className="w-[280px] h-[240px] md:w-[380px] md:h-[350px]" width="128" height="128" src={imageSrc}/>
                             </div>
                             :
                             <label className="cursor-pointer text-sm underline" htmlFor="avatar_upload">
-                                <div className="flex h-[400px] justify-center items-center text-center">
+                                <div className="flex h-[300px] justify-center items-center text-center md:h-[400px]">
                                     <input type="file" className="hidden" name="avatar_upload" id="avatar_upload" accept="image/*"/>
                                     <PlusIcon width="120px" height="120px" className="cursor-pointer"/>
                                 </div>
@@ -229,27 +229,27 @@ const Create = () => {
                     <div className="">
                         Name
                     </div>
-                    <input type="text" placeholder="" className="w-[500px] h-[40px] p-2 bg-neutral-100 dark:bg-neutral-700 rounded-md mb-3" onChange={(e) => {setItem_name(e.target.value)}}/>
+                    <input type="text" placeholder="" className="w-[300px] md:w-[500px] h-[40px] p-2 bg-neutral-100 dark:bg-neutral-700 rounded-md mb-3" onChange={(e) => {setItem_name(e.target.value)}}/>
                     
                     <div className="">
                         Description
                     </div>
-                    <textarea placeholder="(Not more than 200words)" className="w-[500px] h-[100px] p-2 mb-3 bg-neutral-100 dark:bg-neutral-700 rounded-md" onChange={(e) => {setItem_description(e.target.value)}}/>
+                    <textarea placeholder="(Not more than 200words)" className="w-[300px] md:w-[500px] h-[100px] p-2 mb-3 bg-neutral-100 dark:bg-neutral-700 rounded-md" onChange={(e) => {setItem_description(e.target.value)}}/>
 
                     <div className="">
                         Starting Price
                     </div>
-                    <input type="number" placeholder="(Not less than $1,000)" className="w-[500px] h-[40px] p-2 mb-3 bg-neutral-100 dark:bg-neutral-700 rounded-md" onChange={(e) => {setItem_startprice(parseInt(e.target.value))}}/>
+                    <input type="number" placeholder="(Not less than $1,000)" className="w-[300px] md:w-[500px] h-[40px] p-2 mb-3 bg-neutral-100 dark:bg-neutral-700 rounded-md" onChange={(e) => {setItem_startprice(parseInt(e.target.value))}}/>
 
                     <div className="">
                         Bid Increment Price
                     </div>
-                    <input type="number" placeholder="(Not less than $100)" className="w-[500px] h-[40px] p-2 mb-3 bg-neutral-100 dark:bg-neutral-700 rounded-md" onChange={(e) => {setItem_perprice(parseInt(e.target.value))}}/>
+                    <input type="number" placeholder="(Not less than $100)" className="w-[300px] md:w-[500px] h-[40px] p-2 mb-3 bg-neutral-100 dark:bg-neutral-700 rounded-md" onChange={(e) => {setItem_perprice(parseInt(e.target.value))}}/>
 
                     <div className="">
                         Bid End Time
                     </div>
-                    <input type="datetime-local" className="w-[500px] h-[40px] p-2 mb-3 bg-neutral-100 dark:bg-neutral-700 rounded-md" onChange={(e) => {setItem_endtime(new Date(e.target.value).toString())}}/>
+                    <input type="datetime-local" className="w-[300px] md:w-[500px] h-[40px] p-2 mb-3 bg-neutral-100 dark:bg-neutral-700 rounded-md" onChange={(e) => {setItem_endtime(new Date(e.target.value).toString())}}/>
                 </div>
             </div>
             

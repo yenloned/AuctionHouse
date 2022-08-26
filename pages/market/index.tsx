@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { SearchIcon, ChevronLeftIcon, ChevronRightIcon, LockClosedIcon, ClockIcon, BellIcon } from "@heroicons/react/solid"
+import { ChevronLeftIcon, ChevronRightIcon, LockClosedIcon, ClockIcon, BellIcon } from "@heroicons/react/solid"
 import { io, Socket } from "socket.io-client"
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
 import { allActivitiesType, allItemsType, fetchAllItemsType } from "../../interface/marketFetching"
@@ -12,6 +12,7 @@ import { checkIfJWTexpired, getUserIdFromJWT } from "../../functions/checkJWT"
 import { getUserActivity } from "../../functions/api/getUserActivity"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
 import { ActivityForLobbyWS, marketLobbyForWS } from "../../interface/websocket"
+import Footer from "../../comps/Footer"
 
 export async function getServerSideProps(){
   const client = new ApolloClient({
@@ -74,7 +75,6 @@ export async function getServerSideProps(){
 const Market = (props: fetchAllItemsType) => {
   const loginStatus = useContext(LoginStatusContext)
   const [userID, setUserID] = useState("")
-  const [searchItem, setSearchItem] = useState("")
   const [isDefaultSorting, setIsDefaultSorting] = useState(true)
   const [sortingChoice, setSortingChoice] = useState("")
   const [sortedItems, setSortedItems] = useState<allItemsType[]>([])
@@ -212,9 +212,10 @@ const Market = (props: fetchAllItemsType) => {
   }
 
   return (
+    <>
     <div className="bg-neutral-50 dark:bg-gray-900 h-auto my-auto pt-10">
-      <div className="flex justify-between mx-[8vw]">
-        <div className="flex gap-3">
+      <div className="flex flex-col justify-between mx-[8vw] md:flex-row">
+        <div className="flex flex-col gap-3 md:flex-row">
           <div className={activityChoice === "recent activity" ? activityChoice_active : activityChoice_inactive} onClick={() => switchActivityChoice("recent activity")}>Recent Activity</div>
           <div className={activityChoice === "my activity" ? activityChoice_active : activityChoice_inactive} onClick={() => switchActivityChoice("my activity")}>My Activity</div>
         </div>
@@ -286,45 +287,47 @@ const Market = (props: fetchAllItemsType) => {
           ""
         }
       </div>
-      <div className="flex mx-[8vw] justify-between mb-2">
-        <div className="flex gap-2 items-end font-family_header3 text-lg">
-          <div className={isDefaultSorting ? "cursor-pointer p-1 px-4 bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-100 border-2 border-neutral-300 dark:bg-gradient-to-t dark:from-neutral-800 dark:via-gray-800 dark:to-neutral-800 dark:border-neutral-400" : sortingChoices_inactive} onClick={() => switchSortingChoice("latest")}> Latest </div>
+      <div className="flex mx-[8vw] justify-between mb-2 ">
+        <div className="flex gap-2 items-end font-family_header3 text-lg scrollbar overflow-x-scroll">
+          <div className={isDefaultSorting ? "cursor-pointer p-1 px-4 bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-100 border-2 border-neutral-300 dark:bg-gradient-to-t dark:from-neutral-800 dark:via-gray-800 dark:to-neutral-800 dark:border-neutral-400" : sortingChoices_inactive} onClick={() => switchSortingChoice("latest")}> Latest Created</div>
           <div className={sortingChoice === "lowest price" ? sortingChoices_active : sortingChoices_inactive} onClick={() => switchSortingChoice("lowest price")}> Lowest Price </div>
           <div className={sortingChoice === "highest price" ? sortingChoices_active : sortingChoices_inactive} onClick={() => switchSortingChoice("highest price")}> Highest Price </div>
           <div className={sortingChoice === "ending soon" ? sortingChoices_active : sortingChoices_inactive} onClick={() => switchSortingChoice("ending soon")}> Ending Soon </div>
         </div>
-        <form className="text-center">
-          <div className="flex items-center text-center bg-zinc-200 rounded-md
-          dark:bg-zinc-700 text-lg">
-            <input type="text" className="w-full my-1 mx-5 focus:outline-none bg-zinc-200 h-7 p-1
-            dark:bg-zinc-700" onChange={(e) => setSearchItem(e.target.value)}
-            placeholder="Search for items"/>
-            <SearchIcon className="w-6 h-6 mx-4 cursor-pointer" onClick={() => console.log(searchItem)}/>
-          </div>
-        </form>
       </div>
       <div className="flex flex-col mx-[8vw] gap-20">
         {isDefaultSorting ?
         props?.defaultSortedItems.slice(4*currentPage-4,4*currentPage).map((eachItems) => {
           return (
-          <div key={eachItems._id} className="flex py-6 px-12 bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg border-x-2
-          dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">
-            <img src={eachItems.photo_URL} className="w-[200px] h-[220px]" />
+          <div key={eachItems._id} className="flex flex-col items-center py-2 px-0 bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg border-x-2
+          dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900 lg:flex-row lg:px-12 lg:py-6">
+            <img src={eachItems.photo_URL} className="w-[200px] h-[200px]" />
             <div className="flex flex-col mx-[6vw] grow">
-              <div className="font-family_header3 font-semibold text-xl">{eachItems.name}</div>
+              <div className="font-family_header3 text-center font-semibold text-xl lg:text-left">{eachItems.name}</div>
               <div className="font-family_header2 text-[1.1rem]">
-                <div className="flex gap-1">Created at <div className="text-emerald-500 dark:text-sky-400">{convertRawTimeToFormatV2(eachItems.start_time)} (HKT)</div> By <div>{eachItems.owner_data.firstname} {eachItems.owner_data.lastname}</div>
+                <div className="block gap-1 text-center md:flex md:text-left">
+                  <div className="flex gap-1 justify-center">
+                    Created at 
+                    <div className="text-emerald-500 dark:text-sky-400">
+                    {convertRawTimeToFormatV2(eachItems.start_time)} (HKT)</div>
+                  </div>
+                  <div className="flex gap-1 justify-center">
+                    By 
+                    <div className="text-emerald-500 dark:text-sky-400">
+                      {eachItems.owner_data.firstname} {eachItems.owner_data.lastname}
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="scrollbar pr-2 my-2 text-base h-[75px] overflow-y-scroll text-justify snap-none">{eachItems.description}</div>
-              <div className="flex mt-1 justify-around text-lg font-family_body2">
+              <div className="scrollbar pr-2 my-2 text-base h-[50px] overflow-y-scroll snap-none lg:h-[75px] lg:text-justify">{eachItems.description}</div>
+              <div className="flex flex-col mt-1 items-center justify-around text-lg font-family_body2 lg:flex-row">
                 <div className="">Start Price: {eachItems.start_price}</div>
                 <div className="flex gap-1 font-family_header3">
                   Current Price: <div className="text-yellow-400 dark:text-amber-300">{eachItems.current_price ? eachItems.current_price : eachItems.start_price}</div>
                 </div>
                 <div className="">Bid Increment: {eachItems.per_price}</div>
               </div>
-              <div className="flex mt-1 justify-around text-lg font-family_body2">
+              <div className="flex flex-col mt-1 items-center justify-around text-lg font-family_body2 md:flex-row">
                 <div className="flex gap-1">
                     Top Bidder: <div className="text-emerald-500 dark:text-cyan-300">{eachItems.bidder_data ? `${eachItems.bidder_data.firstname} ${eachItems.bidder_data.lastname}` : " --"}</div>
                 </div>
@@ -343,37 +346,48 @@ const Market = (props: fetchAllItemsType) => {
         :
         sortedItems.slice(4*currentPage-4,4*currentPage).map((eachItems) => {
           return (
-          <div key={eachItems._id} className="flex py-6 px-12 bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg border-x-2
-          dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900">
-            <img src={eachItems.photo_URL} className="w-[200px] h-[220px]" />
-            <div className="flex flex-col mx-[6vw] grow">
-              <div className="font-family_header3 font-semibold text-xl">{eachItems.name}</div>
-              <div className="font-family_header2 text-[1.1rem]">
-                <div className="flex gap-1">Created at <div className="text-emerald-500 dark:text-sky-400">{convertRawTimeToFormatV2(eachItems.start_time)} (HKT)</div> By <div>{eachItems.owner_data.firstname} {eachItems.owner_data.lastname}</div>
+            <div key={eachItems._id} className="flex flex-col items-center py-2 px-0 bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg border-x-2
+            dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900 lg:flex-row lg:px-12 lg:py-6">
+              <img src={eachItems.photo_URL} className="w-[200px] h-[200px]" />
+              <div className="flex flex-col mx-[6vw] grow">
+                <div className="font-family_header3 text-center font-semibold text-xl lg:text-left">{eachItems.name}</div>
+                <div className="font-family_header2 text-[1.1rem]">
+                  <div className="block gap-1 text-center md:flex md:text-left">
+                    <div className="flex gap-1 justify-center">
+                      Created at 
+                      <div className="text-emerald-500 dark:text-sky-400">
+                      {convertRawTimeToFormatV2(eachItems.start_time)} (HKT)</div>
+                    </div>
+                    <div className="flex gap-1 justify-center">
+                      By 
+                      <div className="text-emerald-500 dark:text-sky-400">
+                        {eachItems.owner_data.firstname} {eachItems.owner_data.lastname}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="scrollbar pr-2 my-2 text-base font-family_body h-[75px] overflow-y-scroll text-justify snap-none">{eachItems.description}</div>
-              <div className="flex mt-1 justify-around text-lg font-family_body2">
-                <div className="">Start Price: {eachItems.start_price}</div>
-                <div className="flex gap-1 font-family_header3">
-                  Current Price: <div className="text-yellow-400 dark:text-amber-300">{eachItems.current_price ? eachItems.current_price : eachItems.start_price}</div>
+                <div className="scrollbar pr-2 my-2 text-base h-[50px] overflow-y-scroll text-left snap-none lg:h-[75px] lg:text-justify">{eachItems.description}</div>
+                <div className="flex flex-col mt-1 items-center justify-around text-lg font-family_body2 lg:flex-row">
+                  <div className="">Start Price: {eachItems.start_price}</div>
+                  <div className="flex gap-1 font-family_header3">
+                    Current Price: <div className="text-yellow-400 dark:text-amber-300">{eachItems.current_price ? eachItems.current_price : eachItems.start_price}</div>
+                  </div>
+                  <div className="">Bid Increment: {eachItems.per_price}</div>
                 </div>
-                <div className="">Bid Increment: {eachItems.per_price}</div>
-              </div>
-              <div className="flex mt-1 justify-around text-lg font-family_body2">
-                <div className="flex gap-1">
-                  Top Bidder: <div className="text-emerald-500 dark:text-cyan-300">{eachItems.bidder_data ? `${eachItems.bidder_data.firstname} ${eachItems.bidder_data.lastname}` : " --"}</div>
+                <div className="flex flex-col mt-1 items-center justify-around text-lg font-family_body2 md:flex-row">
+                  <div className="flex gap-1">
+                      Top Bidder: <div className="text-emerald-500 dark:text-cyan-300">{eachItems.bidder_data ? `${eachItems.bidder_data.firstname} ${eachItems.bidder_data.lastname}` : " --"}</div>
+                  </div>
+                  <div className="flex gap-1">
+                    Time Left: <div className={eachItems.time_left === "less than a minute" ? "text-red-600" : "text-emerald-500 dark:text-cyan-300"}>{eachItems.time_left}
+                  </div>
                 </div>
-                <div className="flex gap-1">
-                  Time Left: <div className={eachItems.time_left === "less than a minute" ? "text-red-600" : "text-emerald-500 dark:text-cyan-300"}>{eachItems.time_left}
                 </div>
+                <div className="text-center mt-2">
+                  <button className="text-center px-2 rounded-md font-family_header3 text-lg bg-gradient-to-t from-green-400 via-emerald-200 to-teal-300 dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500" onClick={() => redirectToItemPage(eachItems._id)}>Bid / See More Detail</button>
                 </div>
-              </div>
-              <div className="text-center mt-2">
-                <button className="text-center px-2 rounded-md font-family_header3 text-lg bg-gradient-to-t from-green-400 via-emerald-200 to-teal-300 dark:bg-gradient-to-t dark:from-cyan-400 dark:via-sky-500 dark:to-blue-500" onClick={() => redirectToItemPage(eachItems._id)}>Bid / See More Detail</button>
               </div>
             </div>
-          </div>
           )
         })
       }
@@ -388,8 +402,9 @@ const Market = (props: fetchAllItemsType) => {
         })}
         <ChevronRightIcon className="cursor-pointer w-6 h-8" onClick={currentPage === totalMaxPages ? () => {} : () => nextPage(currentPage)} />
       </div>
-
     </div>
+    <Footer/>
+    </>
   )
   }
   
