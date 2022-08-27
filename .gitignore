@@ -10,6 +10,8 @@
 /backend/yarn-error.log*
 /backend/.pnpm-debug.log*
 /backend/.*
+backend/
+/backend
 
 # dependencies
 /node_modules
