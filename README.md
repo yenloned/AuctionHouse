@@ -33,7 +33,6 @@ This project is still in development, website will be deployed afterward.
 * [Apollo-GraphQL](https://www.apollographql.com/)
 * [Cloudinary](https://cloudinary.com/)
 * [Loadash](https://lodash.com/)
-* -- (Continue Update)
 
 ## Getting Started
 ```node
@@ -48,32 +47,46 @@ npm start
 Open [http://localhost:3000](http://localhost:3000) and you will see the page appear.
 
 ## Architectures
-* -- (Continue Update)
+### Overview
+![OVERVIEW ARCHITECTURE](media/png/overview.png)
 
 ## Design
 * Fully Responsive
 * Server Side Rendering
 * GraphQL API
-* WebSocket
+* Real-time System (WebSocket)
 
 ## Functions
 * Avatar/Icon Upload
 * Bidding Item
 * Create Item
-* -- (Continue Update)
 
 ## Features
 * Dark/Light Mode
 * Searching / Categories
 * Recent Activity
 * Image Upload
-* -- (Continue Update)
 
 ## Preview
-* -- (Continue Update)
+### <p align="center">Desktop View</p>
+||
+|----------------------------------------|
+|![DESKTOP PREVIEW](media/png/demo1.png)|
+|![DESKTOP PREVIEW](media/png/demo2.png)|
+
+### <p align="center">Real-Time Demo</p>
+||
+|----------------------------------------|
+|![DESKTOP PREVIEW](media/gif/demo1.gif)|
+|![DESKTOP PREVIEW](media/gif/demo2.gif)|
+
+### <p align="center">Phone View</p>
+| | | | |
+|-------------------------------|-------------------------------|-------------------------------|-------------------------------|
+|![](media/png/phone_demo1.png)|![](media/png/phone_demo2.png)|![](media/png/phone_demo3.png)|![](media/png/phone_demo4.png)|
 
 ## Epilogue
-* -- (Continue Update)
+This project is mainly focused on the Real-Time mechanism carried by WebSocket and GraphQL API. It is my first try and a great learning experience. Please feel free to reach out if you have any suggestions!
 
 
 
