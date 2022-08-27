@@ -8,7 +8,7 @@ import { currentItemType } from "../../interface/userProfile"
 const fetcher = async () =>{
     const jwt_token = typeof window !== 'undefined' ? localStorage.getItem('jwt_token') : null
     const client = new ApolloClient({
-        uri: "http://localhost:5000/graphql/",
+        uri: "https://auctionhouse-backend-api.herokuapp.com/graphql/",
         cache: new InMemoryCache(),
         headers: {
             authorization: jwt_token ? `Bearer ${jwt_token}` : ""
