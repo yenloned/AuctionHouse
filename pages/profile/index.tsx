@@ -94,7 +94,7 @@ const userPage = () => {
             return setImageErrorMsg("Invalid File Type. Please try again.")
         }
 
-      const uploadResult = await fetch(`http://localhost:5000/cloudinary/uploadIcon`, {
+      const uploadResult = await fetch(`https://auctionhouse-backend-api.herokuapp.com/cloudinary/uploadIcon`, {
         method: 'POST',
         body: JSON.stringify({data:imageSrc, public_id: find_profile._id, upload_preset: "auction-house-icons"}),
         headers: {

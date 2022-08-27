@@ -13,7 +13,7 @@ const Layout = (({children}: any) =>{
 
     const getUserDataForLayOut = async (token: string | null) => {
         const client = new ApolloClient({
-            uri: "http://localhost:5000/graphql/",
+            uri: "https://auctionhouse-backend-api.herokuapp.com/graphql/",
             cache: new InMemoryCache(),
             headers: {
                 authorization: token ? `Bearer ${token}` : ""

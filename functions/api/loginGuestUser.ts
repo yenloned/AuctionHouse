@@ -2,7 +2,7 @@ import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
 
 export const registerGuestUser = async () =>{
   const client = new ApolloClient({
-      uri: "http://localhost:5000/graphql/",
+      uri: "https://auctionhouse-backend-api.herokuapp.com/graphql/",
       cache: new InMemoryCache(),
     })
   try{
@@ -20,7 +20,7 @@ export const registerGuestUser = async () =>{
 
 export const loginGuestUser = async (guestEmail: string) => {
   const client = new ApolloClient({
-    uri: "http://localhost:5000/graphql/",
+    uri: "https://auctionhouse-backend-api.herokuapp.com/graphql/",
     cache: new InMemoryCache(),
   })
   try{

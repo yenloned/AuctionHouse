@@ -2,7 +2,7 @@ import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
 
 export const getUserActivity = async(userID: string) => {
     const client = new ApolloClient({
-        uri: "http://localhost:5000/graphql/",
+        uri: "https://auctionhouse-backend-api.herokuapp.com/graphql/",
         cache: new InMemoryCache(),
       })
       try{
