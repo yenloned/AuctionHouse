@@ -15,7 +15,7 @@ const Create = () => {
     //socketio
     const [websocket, setWebsocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap>>()
     useEffect(() => {
-        const socket = io("https://auctionhouse-backend-api.herokuapp.com:6001/", {transports: ['websocket']})
+        const socket = io("https://auctionhouse-backend-api.herokuapp.com/", {transports: ['websocket']})
         setWebsocket(socket)
     },[])
 

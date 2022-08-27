@@ -95,7 +95,7 @@ const Market = (props: fetchAllItemsType) => {
   const [websocket, setWebsocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap>>()
   const [WS_recentActivity, setWS_recentActivity] = useState<ActivityForLobbyWS[]>()
   useEffect(() => {
-    const socket = io("https://auctionhouse-backend-api.herokuapp.com:6001/", {transports: ['websocket']})
+    const socket = io("https://auctionhouse-backend-api.herokuapp.com/", {transports: ['websocket']})
     setWebsocket(socket)
   },[])
 

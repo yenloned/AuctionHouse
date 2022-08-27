@@ -49,7 +49,7 @@ const ItemInMarket = (props: fetchOneItemType) => {
         setUserToken(jwt_token)
         setUserID(getUserIdFromJWT(jwt_token))
         //create websocket
-        const client = io("https://auctionhouse-backend-api.herokuapp.com:6001/", {transports: ["websocket"]})
+        const client = io("https://auctionhouse-backend-api.herokuapp.com/", {transports: ["websocket"]})
         //join the item room for that websocket
         client.emit('join-room', props.finalData._id)
         setWebsocket(client)
