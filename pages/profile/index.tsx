@@ -152,7 +152,10 @@ const userPage = () => {
                     </div>
                 </div>
                 <div className="basis-1/2 text-lg py-8 rounded-xl bg-gray-100 shadow-xl
-                dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">{find_profile.balance}</div>
+                dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">
+                    <div className="text-lg font-family_header1">Balance</div>
+                    <div className="my-3 text-teal-400 dark:text-sky-400">$ {find_profile.balance}</div>
+                </div>
             </div>
             <div className="text-lg py-5 min-h-[180px] rounded-xl bg-gray-100 shadow-xl font-family_header1
             dark:bg-neutral-800 dark:shadow-xl dark:shadow-zinc-800/40">

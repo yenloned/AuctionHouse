@@ -33,7 +33,7 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
-            <div className="flex justify-center mb-4">
+            <div className="flex justify-center mb-4 font-family_body3">
                 © 2022 Rudy Yen. All Rights Reserved
             </div>
         </div>
