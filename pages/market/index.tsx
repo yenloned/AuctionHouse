@@ -57,8 +57,14 @@ export async function getServerSideProps(){
       const currTime = new Date().getTime()
       const endTime = new Date(d.end_time).getTime()
       const time_left = initTimeDifference(secondsDifference(currTime, endTime))
-
-      return {...d, time_left}
+      const {current_price} = d;
+      if (!current_price){
+        const current_price = d.start_price
+        return {...d, current_price, time_left}
+      }else{
+        const current_price = d.current_price
+        return {...d, current_price, time_left}
+      }
     }).filter((eachItem: allItemsType) =>{
       return checkIfTimeStillValid(eachItem.end_time)
     })
