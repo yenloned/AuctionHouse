@@ -165,7 +165,7 @@ const Create = () => {
                 return setImageErrorMsg(props.data.createItem.message)
             }
         }catch(e){
-            return setImageErrorMsg("Account expired.")
+            return setImageErrorMsg("Account expired / Valid Input (Do not enter line break (Enter)).")
         }
         
         setCreatedItem(true)
