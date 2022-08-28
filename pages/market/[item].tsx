@@ -188,7 +188,7 @@ const ItemInMarket = (props: fetchOneItemType) => {
                 }
             </div>
 
-            <div className="flex flex-col items-center justify-center gap-5 my-8 lg:flex">
+            <div className="flex flex-col items-center justify-center gap-5 my-8 lg:flex-row">
                 <div className="flex flex-col">
                     <div className="text-center font-family_header4 font-bold text-xl mb-1">Top Bidder</div>
                     <div className="flex py-4 px-6 w-[350px] h-[300px] justify-center items-center bg-gradient-to-t from-neutral-100 via-slate-50 to-neutral-200 shadow-lg border-x-2 dark:bg-gradient-to-t dark:from-neutral-900 dark:via-gray-900 dark:to-neutral-900 dark:border-neutral-900 md:w-[600px]">
