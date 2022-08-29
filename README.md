@@ -64,9 +64,10 @@ Open [http://localhost:3000](http://localhost:3000) and you will see the page ap
 
 ## Features
 * Dark/Light Mode
-* Searching / Categories
+* Scheduled Tasks
 * Recent Activity
 * Image Upload
+* Sorting / Categories
 
 ## Preview
 ### <p align="center">Desktop View</p>
