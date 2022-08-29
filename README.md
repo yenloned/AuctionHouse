@@ -16,7 +16,8 @@
 Auction House is a real-time mock bidding website, which provides fast and real-time bidding functions by GraphQL API and Socket.IO. It does not involve any real currencies, trading, bidding, or buying and selling since this project is aimed to demo the web development technologies and practice.
 
 ## Live Demo
-[https://auctionhouse-web.netlify.app/](https://auctionhouse-web.netlify.app/)
+[https://auctionhouse-web.netlify.app/](https://auctionhouse-web.netlify.app/)<br/>
+<sub>Note: the backend server will turn to sleep mode after a period of inactive, please refresh if you encounter a request timeout. </sub>
 
 ## Technologies
 **FrontEnd**
