@@ -1,10 +1,10 @@
 // Configuration for backend services
 export const config = {
   // Backend API URL
-  API_BASE_URL: "https://auctionhousebackend.netlify.app",
+  API_BASE_URL: "https://auctionhouse-web.netlify.app",
   
   // Socket server URL
-  SOCKET_URL: "https://auctionhousesocket.netlify.app",
+  SOCKET_URL: "https://auction-house-socket.vercel.app",
   
   // GraphQL endpoint
   get GRAPHQL_URL() {
