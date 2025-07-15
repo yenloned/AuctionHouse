@@ -1,9 +1,10 @@
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
 import { UserRegister } from "../../interface/userAuth";
+import { config } from "../../interface/config";
 
 export const signupUser = async (signupInput: UserRegister) =>{
     const client = new ApolloClient({
-        uri: "https://auctionhouse-backend-api.herokuapp.com/graphql/",
+        uri: config.GRAPHQL_URL,
         cache: new InMemoryCache(),
       })
     try{

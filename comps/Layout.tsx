@@ -6,6 +6,7 @@ import { checkIfJWTexpired, getUserIdFromJWT } from "../functions/checkJWT";
 import CustomTheme from "./CustomTheme";
 import NavBar from "./Navbar"
 import { userDataForNavbar } from "../interface/userProfile";
+import { config } from "../interface/config";
 
 const Layout = (({children}: any) =>{
     const loginStatus = useContext(LoginStatusContext)
@@ -13,7 +14,7 @@ const Layout = (({children}: any) =>{
 
     const getUserDataForLayOut = async (token: string | null) => {
         const client = new ApolloClient({
-            uri: "https://auctionhouse-backend-api.herokuapp.com/graphql/",
+            uri: config.GRAPHQL_URL,
             cache: new InMemoryCache(),
             headers: {
                 authorization: token ? `Bearer ${token}` : ""

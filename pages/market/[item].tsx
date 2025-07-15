@@ -13,6 +13,7 @@ import { DefaultEventsMap } from "socket.io/dist/typed-events"
 import { bidItem } from "../../functions/api/bidItem"
 import { getJWT, getUserIdFromJWT } from "../../functions/checkJWT"
 import { ActivityForWS, marketItemForWS, TopBidderForWS } from "../../interface/websocket"
+import { config } from "../../interface/config"
 
 const ItemInMarket = (props: fetchOneItemType) => {
     if(_.isEmpty(props)){
@@ -49,7 +50,7 @@ const ItemInMarket = (props: fetchOneItemType) => {
         setUserToken(jwt_token)
         setUserID(getUserIdFromJWT(jwt_token))
         //create websocket
-        const client = io("https://auctionhouse-backend-socket.herokuapp.com/", {transports: ["websocket"]})
+        const client = io(config.SOCKET_URL, {transports: ["websocket"]})
         //join the item room for that websocket
         client.emit('join-room', props.finalData._id)
         setWebsocket(client)
@@ -254,7 +255,7 @@ export async function getServerSideProps(context: any) {
     const {item} = query
 
     const client = new ApolloClient({
-        uri: "https://auctionhouse-backend-api.herokuapp.com/graphql/",
+        uri: config.GRAPHQL_URL,
         cache: new InMemoryCache(),
       })
       try{

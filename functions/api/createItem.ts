@@ -1,10 +1,10 @@
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
 import { CreateItemType } from "../../interface/marketItems"
-
+import { config } from "../../interface/config";
 
 export const createItem = async (input: CreateItemType) => {
     const client = new ApolloClient({
-        uri: "https://auctionhouse-backend-api.herokuapp.com/graphql/",
+        uri: config.GRAPHQL_URL,
         cache: new InMemoryCache(),
       })
       try{

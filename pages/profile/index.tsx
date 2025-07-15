@@ -4,11 +4,12 @@ import useSWR from "swr"
 import { UploadIcon } from "@heroicons/react/solid"
 import LoadingSpinner from "../../comps/LoadingSpinner"
 import { currentItemType } from "../../interface/userProfile"
+import { config } from "../../interface/config"
 
 const fetcher = async () =>{
     const jwt_token = typeof window !== 'undefined' ? localStorage.getItem('jwt_token') : null
     const client = new ApolloClient({
-        uri: "https://auctionhouse-backend-api.herokuapp.com/graphql/",
+        uri: config.GRAPHQL_URL,
         cache: new InMemoryCache(),
         headers: {
             authorization: jwt_token ? `Bearer ${jwt_token}` : ""
@@ -94,7 +95,7 @@ const userPage = () => {
             return setImageErrorMsg("Invalid File Type. Please try again.")
         }
 
-      const uploadResult = await fetch(`https://auctionhouse-backend-api.herokuapp.com/cloudinary/uploadIcon`, {
+      const uploadResult = await fetch(config.CLOUDINARY_UPLOAD_URL, {
         method: 'POST',
         body: JSON.stringify({data:imageSrc, public_id: find_profile._id, upload_preset: "auction-house-icons"}),
         headers: {

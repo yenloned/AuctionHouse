@@ -13,10 +13,11 @@ import { getUserActivity } from "../../functions/api/getUserActivity"
 import { DefaultEventsMap } from "socket.io/dist/typed-events"
 import { ActivityForLobbyWS, marketLobbyForWS } from "../../interface/websocket"
 import Footer from "../../comps/Footer"
+import { config } from "../../interface/config"
 
 export async function getServerSideProps(){
   const client = new ApolloClient({
-    uri: "https://auctionhouse-backend-api.herokuapp.com/graphql/",
+    uri: config.GRAPHQL_URL,
     cache: new InMemoryCache(),
   })
   try{
@@ -95,7 +96,7 @@ const Market = (props: fetchAllItemsType) => {
   const [websocket, setWebsocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap>>()
   const [WS_recentActivity, setWS_recentActivity] = useState<ActivityForLobbyWS[]>()
   useEffect(() => {
-    const socket = io("https://auctionhouse-backend-socket.herokuapp.com/", {transports: ['websocket']})
+    const socket = io(config.SOCKET_URL, {transports: ['websocket']})
     setWebsocket(socket)
   },[])
 

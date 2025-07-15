@@ -9,13 +9,14 @@ import { validImageType } from "../../functions/validImageType";
 import { io, Socket } from "socket.io-client";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import LoadingSpinner from "../../comps/LoadingSpinner";
+import { config } from "../../interface/config";
 
 const Create = () => {
 
     //socketio
     const [websocket, setWebsocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap>>()
     useEffect(() => {
-        const socket = io("https://auctionhouse-backend-socket.herokuapp.com/", {transports: ['websocket']})
+        const socket = io(config.SOCKET_URL, {transports: ['websocket']})
         setWebsocket(socket)
     },[])
 
@@ -95,7 +96,7 @@ const Create = () => {
             return setImageErrorMsg("Invalid File Type. Please try again.")
         }
 
-        const uploadResult = await fetch(`https://auctionhouse-backend-api.herokuapp.com/cloudinary/uploadIcon`, {
+        const uploadResult = await fetch(config.CLOUDINARY_UPLOAD_URL, {
           method: 'POST',
           body: JSON.stringify({data:imageSrc, public_id: item_id, upload_preset: "auction-house-items"}),
           headers: {

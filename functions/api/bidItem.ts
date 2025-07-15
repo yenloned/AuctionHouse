@@ -1,8 +1,9 @@
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client"
+import { config } from "../../interface/config";
 
 export const bidItem = async (userID: string, item_id: string, bid_price: number, jwt_token: string|null, timestamp: string) => {
     const client = new ApolloClient({
-        uri: "https://auctionhouse-backend-api.herokuapp.com/graphql/",
+        uri: config.GRAPHQL_URL,
         cache: new InMemoryCache(),
         headers: {
             authorization: jwt_token ? `Bearer ${jwt_token}` : ""
